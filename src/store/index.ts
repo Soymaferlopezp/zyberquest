@@ -1,0 +1,1 @@
+export { useTriviaStore } from "./triviaStore";

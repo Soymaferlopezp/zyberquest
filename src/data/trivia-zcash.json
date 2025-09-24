@@ -1,0 +1,90 @@
+[
+  {
+    "id": "zcash-001",
+    "category": "privacy",
+    "type": "mcq",
+    "question": "¿Qué permite validar transacciones privadas en Zcash sin revelar datos?",
+    "choices": ["zk-SNARKs", "ECDSA", "Lightning", "OP_RETURN"],
+    "answerIndex": 0,
+    "explain": "Zcash usa zk-SNARKs para probar validez sin revelar montos o direcciones.",
+    "difficulty": "easy",
+    "tags": ["zk", "snarks", "privacy"]
+  },
+  {
+    "id": "zcash-002",
+    "category": "addresses",
+    "type": "mcq",
+    "question": "¿Qué tipo de dirección es transparente en Zcash?",
+    "choices": ["t-address", "z-address", "u-address", "x-address"],
+    "answerIndex": 0,
+    "explain": "Las t-addresses funcionan como transparentes; las z-addresses son shielded y las u-addresses unifican.",
+    "difficulty": "easy",
+    "tags": ["addresses"]
+  },
+  {
+    "id": "zcash-003",
+    "category": "history",
+    "type": "mcq",
+    "question": "¿En qué año se lanzó la red principal de Zcash?",
+    "choices": ["2016", "2013", "2019", "2021"],
+    "answerIndex": 0,
+    "explain": "Zcash (ZEC) lanzó su mainnet en 2016.",
+    "difficulty": "easy",
+    "tags": ["history"]
+  },
+  {
+    "id": "zcash-004",
+    "category": "shielded",
+    "type": "mcq",
+    "question": "¿Qué protege una transacción shielded en Zcash?",
+    "choices": ["Remitente, destinatario y monto", "Solo el monto", "Solo el remitente", "Nada, es pública"],
+    "answerIndex": 0,
+    "explain": "Las transacciones shielded ocultan metadatos clave como direcciones y montos.",
+    "difficulty": "easy",
+    "tags": ["shielded"]
+  },
+  {
+    "id": "zcash-005",
+    "category": "protocol",
+    "type": "mcq",
+    "question": "¿Cuál de estos NO es un nombre de pool o upgrade en Zcash?",
+    "choices": ["Orchard", "Sapling", "Sprout", "Avalanche"],
+    "answerIndex": 3,
+    "explain": "Orchard, Sapling y Sprout son hitos/pools de Zcash; Avalanche es otro protocolo.",
+    "difficulty": "medium",
+    "tags": ["upgrades"]
+  },
+  {
+    "id": "zcash-006",
+    "category": "tooling",
+    "type": "mcq",
+    "question": "¿Qué término describe el mensaje opcional incluido en transacciones shielded?",
+    "choices": ["Memo", "Nonce", "ScriptSig", "Gas note"],
+    "answerIndex": 0,
+    "explain": "El campo memo permite adjuntar un mensaje breve en ciertos outputs.",
+    "difficulty": "easy",
+    "tags": ["memos"]
+  },
+  {
+    "id": "zcash-007",
+    "category": "privacy",
+    "type": "mcq",
+    "question": "El objetivo principal de Zcash es:",
+    "choices": ["Privacidad en pagos", "Contrato social de staking", "Oráculos de precios", "Sharding"],
+    "answerIndex": 0,
+    "explain": "Zcash prioriza pagos con fuerte privacidad verificable.",
+    "difficulty": "easy",
+    "tags": ["privacy"]
+  },
+  {
+    "id": "zcash-008",
+    "category": "crypto",
+    "type": "mcq",
+    "question": "¿Qué categoría de pruebas aplica Zcash para privacidad?",
+    "choices": ["Conocimiento cero", "Firma ciega", "Pruebas interactivos", "Pruebas de participación"],
+    "answerIndex": 0,
+    "explain": "Zcash emplea pruebas de conocimiento cero (zk) para validar sin revelar.",
+    "difficulty": "easy",
+    "tags": ["zk"]
+  }
+]

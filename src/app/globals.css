@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tema base (dark) */
+:root { color-scheme: dark; }
+html, body { height: 100%; }
+body { background: #0A0D0A; color: white; }
+
+.font-sans { font-family: var(--font-inter); }
+.font-mono { font-family: var(--font-plex-mono); }
+
+:focus-visible {
+  outline: none;
+}
+
+.container-zx {
+  width: min(1120px, 100%);
+  margin-inline: auto;
+  padding-inline: 0.75rem; /* ~12px en mobile */
+}
+@media (min-width: 768px) {
+  .container-zx { padding-inline: 1rem; } /* ~24px en tablet */
+}
+@media (min-width: 1280px) {
+  .container-zx { padding-inline: 1.5rem; } /* ~32px en desktop grande */
+}
