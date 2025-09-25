@@ -19,14 +19,14 @@ export default function ControlsHint({
   const items = [
     showEnter ? { k: 'Enter', desc: 'Play' } : null,
     showMute ? { k: 'M', desc: 'Mute/Unmute' } : null,
-    showEsc ? { k: 'Esc', desc: 'Saltar intro' } : null,
+    showEsc ? { k: 'Esc', desc: 'Skip intro' } : null,
   ].filter(Boolean) as { k: string; desc: string }[];
 
   return (
     <div
       data-testid="zq-controls"
       className={`flex flex-wrap items-center justify-center gap-3 text-neutral-400 ${className}`}
-      aria-label="Atajos de teclado"
+      aria-label="Keyboard shortcuts"
     >
       {items.map((it) => (
         <span key={it.k} className="inline-flex items-center gap-1.5" title={`${it.k} = ${it.desc}`}>

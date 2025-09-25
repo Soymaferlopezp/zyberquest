@@ -101,9 +101,9 @@ export default function QuestionCard({
         )}
 
         <span className="text-xs opacity-80 ml-auto" aria-live="polite">
-          {state === "correct" && "¡Correcto! 🔐 Privacidad FTW."}
-          {state === "incorrect" && "Incorrecto. Observa la explicación y continúa."}
-          {state === "idle" && "Usa 1–4 para elegir y Enter para confirmar."}
+          {state === "correct" && "Correct! 🔐 Privacy FTW."}
+          {state === "incorrect" && "Incorrect. Read the explanation and continue."}
+          {state === "idle" && "Use 1–4 to select and Enter to confirm."}
         </span>
       </div>
     </motion.section>

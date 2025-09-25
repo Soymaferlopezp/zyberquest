@@ -14,7 +14,6 @@ export default function MenuPage() {
   const [leaving, setLeaving] = useState(false);
   const [targetHref, setTargetHref] = useState<string | null>(null);
 
-  // Atajos 1/2/3 y Esc (igual que Hito 2)
   const isTypingContext = (el: Element | null) => {
     if (!el) return false;
     const tag = (el as HTMLElement).tagName?.toLowerCase();
@@ -101,10 +100,10 @@ export default function MenuPage() {
       </div>
 
       <p className="mt-6 text-xs text-neutral-400">
-        Usa <span className="font-mono">Tab/Shift+Tab</span> para navegar •{" "}
-        <span className="font-mono">Enter</span> para seleccionar •{" "}
-        <span className="font-mono">1/2/3</span> atajos rápidos •{" "}
-        <span className="font-mono">Esc</span> para volver
+        Usa <span className="font-mono">Tab/Shift+Tab</span> to navigate •{" "}
+        <span className="font-mono">Enter</span> to select •{" "}
+        <span className="font-mono">1/2/3</span> quick shortcuts •{" "}
+        <span className="font-mono">Esc</span> to return
       </p>
     </MenuLayout>
   );

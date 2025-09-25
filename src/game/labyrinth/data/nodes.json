@@ -1,0 +1,18 @@
+[
+  {
+    "id": "zcash-1",
+    "title": "Direcciones Zcash",
+    "lines": [
+      "Zcash tiene direcciones transparentes (t) y blindadas (z).",
+      "Las z ocultan remitente, receptor y monto."
+    ]
+  },
+  {
+    "id": "zcash-2",
+    "title": "Pruebas de conocimiento cero",
+    "lines": [
+      "Zcash usa zk-SNARKs para verificar transacciones sin revelar datos.",
+      "Privacidad fuerte con verificación eficiente."
+    ]
+  }
+]

@@ -1,18 +1,11 @@
 import type { ReactNode } from "react";
 
-/**
- * Envoltura del menú principal.
- * - Fondo con capas: grid sutil + scanline fino (GPU-friendly).
- * - Tipografías: IBM Plex Mono (UI) + Inter (copy). VT323 opcional para heading.
- * - A11y: role="navigation", aria-label y estructura semántica.
- * - Perf: sin filtros pesados; solo CSS gradients.
- */
 export default function MenuLayout({ children }: { children: ReactNode }) {
   return (
     <main
       id="menu-root"
       role="navigation"
-      aria-label="Menú principal"
+      aria-label="Main menu"
       className="relative min-h-dvh overflow-hidden bg-black text-white"
     >
       {/* ---- Fondo decorativo (fuera del árbol accesible) ---- */}
@@ -63,13 +56,13 @@ export default function MenuLayout({ children }: { children: ReactNode }) {
               textShadow: "0 0 12px rgba(0,229,255,0.15)",
             }}
           >
-            Elige tu misión
+            Choose your mission
           </h1>
           <p
             id="menu-subtitle"
             className="mt-2 max-w-prose font-inter text-sm text-neutral-300 md:text-base"
           >
-            Tres caminos para dominar la privacidad y el cifrado.
+            Three ways to master privacy and encryption.
           </p>
         </header>
 
@@ -78,9 +71,9 @@ export default function MenuLayout({ children }: { children: ReactNode }) {
 
         {/* Tips accesibles (puedes moverlos a otra parte si prefieres) */}
         <p className="mt-6 text-xs text-neutral-400">
-          Usa <span className="font-mono">Tab/Shift+Tab</span> para navegar •{" "}
-          <span className="font-mono">Enter</span> para seleccionar •{" "}
-          <span className="font-mono">Esc</span> para volver
+          Use <span className="font-mono">Tab/Shift+Tab</span> to navigate •{" "}
+          <span className="font-mono">Enter</span> to select •{" "}
+          <span className="font-mono">Esc</span> to return
         </p>
       </div>
     </main>

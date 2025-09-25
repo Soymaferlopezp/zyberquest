@@ -28,10 +28,10 @@ export default function ScoreHUD({
     <header className="flex items-center justify-between rounded-2xl border border-white/10 p-3 bg-white/5">
       <div className="flex items-center gap-4">
         <div className="text-sm">
-          Puntaje: <span className="font-mono">{score}</span>
+          Score: <span className="font-mono">{score}</span>
         </div>
         <div className="text-sm">
-          Racha:{" "}
+          Streak:{" "}
           <motion.span
             key={streak}
             initial={{ scale: 1 }}
@@ -46,7 +46,7 @@ export default function ScoreHUD({
       </div>
 
       <div className="text-sm">
-        Pregunta <span className="font-mono">{questionNumber}</span>/<span className="font-mono">{total}</span>
+        Question <span className="font-mono">{questionNumber}</span>/<span className="font-mono">{total}</span>
       </div>
 
       <div className="flex items-center gap-2">

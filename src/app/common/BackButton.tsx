@@ -12,7 +12,7 @@ export default function BackButton() {
       title="Esc también regresa"
     >
       <span aria-hidden>←</span>
-      <span>Volver</span>
+      <span>Return</span>
     </Link>
   );
 }

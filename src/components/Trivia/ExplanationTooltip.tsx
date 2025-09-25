@@ -15,9 +15,9 @@ export default function ExplanationTooltip({ text, learnMoreHref }: ExplanationT
           <button
             type="button"
             className="text-xs rounded-full px-2 py-1 border border-white/20 hover:bg-white/10 focus:outline-none focus:ring"
-            aria-label="¿Por qué? Ver explicación"
+            aria-label="Why? See explanation."
           >
-            ¿Por qué?
+            Why?
           </button>
         </Tooltip.Trigger>
         <Tooltip.Portal>
@@ -34,7 +34,7 @@ export default function ExplanationTooltip({ text, learnMoreHref }: ExplanationT
                 rel="noreferrer"
                 className="underline underline-offset-2 opacity-90 hover:opacity-100"
               >
-                Aprender más ↗
+                Learn more ↗
               </a>
             )}
             <Tooltip.Arrow className="fill-black" />

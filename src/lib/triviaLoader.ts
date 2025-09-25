@@ -11,12 +11,6 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-/**
- * Devuelve copia del banco validado con:
- * - preguntas barajadas
- * - **choices barajados** y **answerIndex recalculado** por cada pregunta
- * - slice a N preguntas
- */
 export function prepareTrivia(count = 10): TriviaQuestion[] {
   const parsed = triviaBankSchema.parse(bankRaw);
 

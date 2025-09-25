@@ -20,14 +20,14 @@ export default function HomePage() {
           {...fadeUp(0)}
           className="text-4xl md:text-6xl font-mono tracking-tight text-zx-green"
         >
-          ZyberQuest — Conecta nodos. Rompe cifrados. Domina el laberinto.
+          ZyberQuest — Connect nodes. Break codes. Master the maze.
         </motion.h1>
 
         <motion.p
           {...fadeUp(0.08)}
           className="mt-4 max-w-2xl text-zinc-300"
         >
-          Arcade cypherpunk para aprender privacidad, ZK y encriptación.
+          Cypherpunk arcade game for learning about privacy, ZK, and encryption.
         </motion.p>
 
         <motion.div
@@ -57,7 +57,7 @@ export default function HomePage() {
           Game Modes
         </motion.h2>
         <p className="mt-2 text-zinc-400 max-w-2xl">
-          Aprende jugando: trivias, laberintos top-down y minisimuladores de cifrado.
+          Learn by playing: trivia games, top-down mazes, and mini encryption simulators.
         </p>
 
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -66,11 +66,11 @@ export default function HomePage() {
             <Card className="bg-zx-mid/40 border-zx-green/25 glow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Brain className="text-zx-green" /> Trivias educativas
+                  <Brain className="text-zx-green" /> Educational trivia
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-zinc-300">
-                Preguntas de privacidad/seguridad del ecosistema Zcash con tooltips explicativos.
+                Privacy/security questions about the Zcash ecosystem with explanatory tooltips.
                 <div className="mt-4">
                   <Link href="/trivias" aria-label="Go to Trivias mode">
                     <Button size="sm" className="bg-zx-green text-zx-ink hover:bg-zx-cyan">
@@ -87,11 +87,11 @@ export default function HomePage() {
             <Card className="bg-zx-mid/40 border-zx-green/25 glow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <KeySquare className="text-zx-green" /> Laberintos de exploración
+                  <KeySquare className="text-zx-green" /> Exploration mazes
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-zinc-300">
-                Top-down 2D con puertas/llaves y conceptos ZK a encontrar y desbloquear.
+                Top-down 2D with doors/keys and ZK concepts to find and unlock.
                 <div className="mt-4">
                   <Link href="/laberintos" aria-label="Go to Laberintos mode">
                     <Button size="sm" className="bg-zx-green text-zx-ink hover:bg-zx-cyan">
@@ -108,11 +108,11 @@ export default function HomePage() {
             <Card className="bg-zx-mid/40 border-zx-green/25 glow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <LockKeyhole className="text-zx-green" /> Simuladores de descifrado
+                  <LockKeyhole className="text-zx-green" /> Decryption simulators
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-zinc-300">
-                Minijuegos (César, sustitución, XOR visual) inspirados en encriptación.
+                Mini-games (Caesar, substitution, visual XOR) inspired by encryption.
                 <div className="mt-4">
                   <Link href="/simuladores" aria-label="Go to Simuladores mode">
                     <Button size="sm" className="bg-zx-green text-zx-ink hover:bg-zx-cyan">
@@ -159,7 +159,6 @@ export default function HomePage() {
           {/* Accesible */}
           <span className="sr-only">Feature list</span>
           {/* Si preferías import: import { Badge } from "../components/ui/badge"; */}
-          {/* Pero para inline rápido: */}
           <span className="inline-flex items-center rounded-md border border-zx-green/35 px-2.5 py-1 text-xs font-mono text-zx-green bg-zx-mid/30 shadow-[0_0_10px_rgba(0,255,156,0.15)]">Accessible</span>
           <span className="inline-flex items-center rounded-md border border-zx-green/35 px-2.5 py-1 text-xs font-mono text-zx-green bg-zx-mid/30 shadow-[0_0_10px_rgba(0,255,156,0.15)]">Replayable</span>
           <span className="inline-flex items-center rounded-md border border-zx-green/35 px-2.5 py-1 text-xs font-mono text-zx-green bg-zx-mid/30 shadow-[0_0_10px_rgba(0,255,156,0.15)]">Cypherpunk UI</span>
@@ -195,7 +194,7 @@ export default function HomePage() {
 
       {/* --- ROADMAP (off-chain) --- */}
       <section id="roadmap" className="container-zx py-12">
-        <h2 className="text-2xl md:text-3xl font-mono text-zx-cyan">Roadmap (off-chain)</h2>
+        <h2 className="text-2xl md:text-3xl font-mono text-zx-cyan">Roadmap</h2>
         <ol className="mt-6 relative border-s border-zx-green/25 pl-6">
           {[
             { title: "MVP", desc: "Core modes + basic UX.", status: "done" },
@@ -222,9 +221,9 @@ export default function HomePage() {
         <h2 className="text-2xl md:text-3xl font-mono text-zx-cyan">Team & Credits</h2>
         <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {[
-            { name: "Bear One", role: "PM" },
-            { name: "Bear Two", role: "BizDev" },
-            { name: "Bear Three", role: "Developer" },
+            { name: "Bear One - Zula", role: "PM" },
+            { name: "Bear Two - Mary", role: "BizDev" },
+            { name: "Bear Three - MaFer", role: "Developer" },
           ].map((m, i) => (
             <article key={i} className="flex items-center gap-4 rounded-xl border border-zx-green/25 bg-zx-mid/30 p-4 glow">
               <div className="grid size-12 place-items-center rounded-full bg-zx-green/20 text-zx-green font-mono">
@@ -253,17 +252,13 @@ export default function HomePage() {
             <a href="#modes" className="inline-flex items-center rounded-md bg-zx-green px-4 py-2 text-zx-ink hover:bg-zx-cyan transition-colors glow">
               Play now
             </a>
-            <a href="https://github.com/tu-repo" target="_blank" rel="noreferrer"
+            <a href="https://github.com/Soymaferlopezp/zyberquest" target="_blank" rel="noreferrer"
               className="inline-flex items-center rounded-md border border-zx-green/35 px-4 py-2 text-white hover:border-zx-cyan/50 transition-colors">
               View repo
             </a>
           </div>
         </div>
       </section>
-
-
-
-
     </>
   );
 }

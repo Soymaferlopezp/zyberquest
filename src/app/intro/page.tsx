@@ -14,14 +14,13 @@ import MuteToggle from '@/components/Intro/MuteToggle';
 import useIntroShortcuts from '@/components/Intro/useIntroShortcuts';
 
 const introLines = [
-  'Estableciendo enlace…',
-  'Autenticando Runner…',
-  'Acceso concedido.',
-  'Tu misión: Conecta nodos. Rompe cifrados. Domina el laberinto.',
+  'Establishing connection…',
+  'Authenticating Runner…',
+  'Access granted.',
+  'Your mission: Connect nodes. Break codes. Master the maze.',
 ];
 
 export default function IntroPage() {
-  // Montamos el provider aquí para que todo dentro pueda usar el contexto de audio.
   return (
     <AudioProvider>
       <IntroBody />
@@ -33,8 +32,8 @@ function IntroBody() {
   const router = useRouter();
   const reduce = useReducedMotion();
 
-  const [canPlay, setCanPlay] = useState(false); // habilita PLAY tras typewriter o salto
-  const [exiting, setExiting] = useState(false); // controla anim de salida
+  const [canPlay, setCanPlay] = useState(false); 
+  const [exiting, setExiting] = useState(false); 
 
   // Watchdog: si algo se retrasa, revela PLAY a los 12s
   useEffect(() => {
@@ -62,7 +61,7 @@ function IntroBody() {
     btn?.focus();
   };
 
-  // Atajos: Enter = Play, Esc = Skip, M = Mute (dentro del provider)
+  // Atajos: Enter = Play, Esc = Skip, M = Mute 
   useIntroShortcuts({ onPlay, onSkip });
 
   return (
@@ -77,9 +76,9 @@ function IntroBody() {
           type="button"
           onClick={onSkip}
           className="rounded-lg border border-white/15 bg-black/40 px-3 py-2 text-xs text-neutral-200 hover:bg-black/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00E5FF]"
-          aria-label="Saltar intro"
+          aria-label="Skip intro"
         >
-          Saltar intro
+          Skip intro
         </button>
       </div>
 
@@ -121,7 +120,7 @@ function IntroBody() {
 
             <ControlsHint className="mt-6" />
             <small className="mt-8 text-[11px] text-neutral-500 font-['Inter',sans-serif]">
-              Demo educativa off-chain
+              Educational demo to learn about the Zcash ecosystem
             </small>
           </motion.section>
         )}

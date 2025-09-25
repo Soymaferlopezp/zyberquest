@@ -5,7 +5,7 @@ export function Footer() {
       <div className="container-zx h-12 flex items-center justify-between text-xs text-zinc-400">
         <p>© {new Date().getFullYear()} BlockBears · ZyberQuest</p>
         <nav aria-label="Footer" className="flex items-center gap-4">
-          <a href="https://github.com/tu-repo" target="_blank" rel="noreferrer" className="hover:text-zx-cyan">Repo</a>
+          <a href="https://github.com/Soymaferlopezp/zyberquest" target="_blank" rel="noreferrer" className="hover:text-zx-cyan">Repo</a>
           <a href="#" className="hover:text-zx-cyan">Twitter</a>
           <a href="#" className="hover:text-zx-cyan">Docs</a>
         </nav>

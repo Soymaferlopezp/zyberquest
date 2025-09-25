@@ -126,7 +126,7 @@ export default function TriviaScreen() {
           />
         ) : (
           <section className="rounded-2xl border border-white/10 p-6 bg-white/5 backdrop-blur">
-            <p className="opacity-70">Cargando preguntas…</p>
+            <p className="opacity-70">Loading questions…</p>
           </section>
         )}
 
@@ -142,10 +142,10 @@ export default function TriviaScreen() {
           className="fixed inset-0 z-40 grid place-items-center bg-black/70"
         >
           <div className="rounded-2xl border border-white/10 bg-black px-6 py-4 text-white shadow">
-            <p className="mb-2">⏸️ Pausa</p>
+            <p className="mb-2">⏸️ Pause</p>
             <p className="text-xs opacity-70">
-              Pulsa <kbd className="px-1 py-0.5 rounded border border-white/20">P</kbd> o{" "}
-              <kbd className="px-1 py-0.5 rounded border border-white/20">Enter</kbd> para continuar
+              Press <kbd className="px-1 py-0.5 rounded border border-white/20">P</kbd> or{" "}
+              <kbd className="px-1 py-0.5 rounded border border-white/20">Enter</kbd> to continue
             </p>
           </div>
         </div>

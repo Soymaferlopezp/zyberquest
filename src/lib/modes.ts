@@ -1,7 +1,7 @@
 export type ModeAccent = "green" | "cyan" | "magenta";
 
 export type Mode = {
-  id: "trivias" | "laberintos" | "simuladores";
+  id: "trivia" | "mazes" | "simulators";
   title: string;
   desc: string;
   href: string;
@@ -10,24 +10,24 @@ export type Mode = {
 
 export const MODES: Mode[] = [
   {
-    id: "trivias",
-    title: "Trivias educativas",
-    desc: "Responde preguntas del ecosistema Zcash con tooltips explicativos.",
+    id: "trivia",
+    title: "Educational trivia",
+    desc: "Answer questions about the Zcash ecosystem with explanatory tooltips.",
     href: "/trivias",
     accent: "green",
   },
   {
-    id: "laberintos",
-    title: "Laberintos de exploración",
-    desc: "Explora nodos, reúne llaves y desbloquea puertas conceptuales de ZK.",
+    id: "mazes",
+    title: "Exploration mazes",
+    desc: "Explore nodes, collect keys, and unlock conceptual doors in ZK.",
     href: "/laberintos",
     accent: "cyan",
   },
   {
-    id: "simuladores",
-    title: "Simuladores de descifrado",
-    desc: "Rompe cifrados (César, sustitución, XOR visual) contra reloj.",
-    href: "/simuladores",
+    id: "simulators",
+    title: "Decryption simulators",
+    desc: "Break codes (Caesar, substitution, visual XOR) against the clock.",
+    href: "/simulators",
     accent: "magenta",
   },
 ];

@@ -50,24 +50,24 @@ export default function SummaryModal({ open }: SummaryModalProps) {
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4">
       <div className="w-full max-w-md rounded-2xl border border-white/10 bg-black p-6 text-white">
-        <h3 className="text-lg font-semibold mb-2">Resumen</h3>
+        <h3 className="text-lg font-semibold mb-2">Summary</h3>
 
         <div className="mb-3 text-xs opacity-80">
-          Récord: <span className="font-mono">{record}</span>
+          Record: <span className="font-mono">{record}</span>
         </div>
 
         <ul className="text-sm space-y-1 mb-4">
           <li>
-            Puntaje: <span className="font-mono">{stats.score}</span>
+            Score: <span className="font-mono">{stats.score}</span>
           </li>
           <li>
-            Aciertos: <span className="font-mono">{stats.correct}</span> / {stats.total}
+            Successes: <span className="font-mono">{stats.correct}</span> / {stats.total}
           </li>
           <li>
-            Mejor racha: <span className="font-mono">{stats.bestStreak}</span>
+            Best streak: <span className="font-mono">{stats.bestStreak}</span>
           </li>
           <li>
-            Tiempo promedio:{" "}
+            Average time:{" "}
             <span className="font-mono">{Number(stats.avgTimeSec).toFixed(1)}s</span>
           </li>
         </ul>
@@ -77,13 +77,13 @@ export default function SummaryModal({ open }: SummaryModalProps) {
             className="rounded-lg px-4 py-2 border border-white/15 hover:bg-white/10"
             onClick={handleRestart}
           >
-            Jugar de nuevo
+            Play again
           </button>
           <button
             className="rounded-lg px-4 py-2 border border-white/15 hover:bg-white/10"
             onClick={handleExit}
           >
-            Volver al menú
+            Back to menu
           </button>
         </div>
       </div>
