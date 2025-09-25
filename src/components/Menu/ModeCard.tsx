@@ -117,8 +117,8 @@ export default function ModeCard({
       role="button"
       onClick={(e) => {
         if (onActivate) {
-          e.preventDefault();   // evitamos navegar de inmediato
-          onActivate();         // delega en el orquestador (page.tsx)
+          e.preventDefault();   
+          onActivate();         
         }
       }}
       onKeyDown={(e) => {

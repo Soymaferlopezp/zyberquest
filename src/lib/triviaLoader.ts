@@ -11,30 +11,36 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-export function prepareTrivia(count = 10): TriviaQuestion[] {
+export type Difficulty = "easy" | "medium" | "hard";
+
+/**
+ * Valida el banco, filtra por dificultad (si se pasa),
+ * baraja preguntas, **baraja choices** y recalcula answerIndex,
+ * y retorna un slice de `count`.
+ */
+export function prepareTrivia(params?: { count?: number; difficulty?: Difficulty }): TriviaQuestion[] {
+  const count = params?.count ?? 10;
+  const difficulty = params?.difficulty;
+
   const parsed = triviaBankSchema.parse(bankRaw);
 
+  // Filtra por dificultad si aplica; si hay pocas, cae back a todo el banco
+  const pool = difficulty
+    ? parsed.filter(q => q.difficulty === difficulty)
+    : parsed;
+
+  const base = (pool.length >= Math.min(count, 4)) ? pool : parsed;
+
   // Barajar preguntas
-  const shuffledQs = shuffle(parsed);
+  const shuffledQs = shuffle(base);
 
   // Para cada pregunta, baraja choices y recalcula answerIndex
   const normalized = shuffledQs.map((q) => {
-    const originalChoices = q.choices;
-    const correctText = originalChoices[q.answerIndex];
-
-    const shuffledChoices = shuffle(originalChoices);
-    const newAnswerIndex = Math.max(
-      0,
-      shuffledChoices.findIndex((c) => c === correctText)
-    );
-
-    return {
-      ...q,
-      choices: shuffledChoices,
-      answerIndex: newAnswerIndex,
-    } as TriviaQuestion;
+    const correctText = q.choices[q.answerIndex];
+    const choicesShuffled = shuffle(q.choices);
+    const newAnswerIndex = Math.max(0, choicesShuffled.findIndex(c => c === correctText));
+    return { ...q, choices: choicesShuffled, answerIndex: newAnswerIndex } as TriviaQuestion;
   });
 
-  // Slice a N
   return normalized.slice(0, Math.min(count, normalized.length));
 }
