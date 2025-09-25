@@ -74,7 +74,7 @@ export default class HUD extends Phaser.Scene {
   }
 
   private render(){
-    this.lbl.setText(`HUD • tiempo ${this.state.timeLeft}s | llaves ${this.state.keys} | score ${this.state.score}`);
+    this.lbl.setText(`HUD • time ${this.state.timeLeft}s | keys ${this.state.keys} | score ${this.state.score}`);
     const w = 140 * this.state.dashReadyRatio;
     this.dashBarFg.width = Math.max(4, w);
   }

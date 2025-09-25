@@ -1,4 +1,3 @@
-// src/game/labyrinth/assets/L1.ts
 export const L1 = (() => {
   const width = 20;
   const height = 15;
@@ -18,8 +17,6 @@ export const L1 = (() => {
     }
   }
 
-  // ejemplo: una “puerta” (tile 2) en la pared del medio arriba
-  // (visual, sin lógica aún; la lógica real llega en Hito 3)
   const doorX = Math.floor(width / 2);
   walls[idx(doorX, 0)] = 2;
 
@@ -72,7 +69,7 @@ export const L1 = (() => {
         margin: 0,
         columns: 4,
         tilecount: 4,
-        image: "tiles_basic.png", // referencia nominal (usaremos textura generada)
+        image: "tiles_basic.png", 
         imagewidth: 64,
         imageheight: 16
       }

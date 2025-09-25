@@ -1,18 +1,21 @@
-import Phaser from "phaser";
-import { makeGameConfig } from "./config";
+import * as Phaser from "phaser";
+import config from "./config";
 
-let game: Phaser.Game | null = null;
+export function createPhaserGameWithMode() {
+  const game = new Phaser.Game(config);
 
-export function createPhaserGame(parent: HTMLElement){
-  if (game) return game;
-  const config = makeGameConfig(parent);
-  game = new Phaser.Game(config);
+  try {
+    const sp = new URLSearchParams(window.location.search);
+    const mode = (sp.get("mode") || "mission").toLowerCase();
+    game.registry.set("mode", mode === "tutorial" ? "tutorial" : "mission");
+  } catch {
+    game.registry.set("mode", "mission");
+  }
+
   return game;
 }
 
-export function destroyPhaserGame(){
-  if (game){
-    game.destroy(true);
-    game = null;
-  }
+export function destroyPhaserGame(game?: Phaser.Game) {
+  if (!game) return;
+  game.destroy(true);
 }

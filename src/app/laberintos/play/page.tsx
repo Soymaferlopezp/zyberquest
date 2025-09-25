@@ -1,21 +1,23 @@
 'use client';
 
 import { useEffect, useRef } from "react";
-import { createPhaserGame, destroyPhaserGame } from "@/game/labyrinth";
+import { createPhaserGameWithMode, destroyPhaserGame } from "@/game/labyrinth";
+import type Phaser from "phaser";
 
-export default function LaberintosPlayPage(){
+export default function LaberintosPlayPage() {
   const mountRef = useRef<HTMLDivElement>(null);
+  const gameRef = useRef<Phaser.Game | null>(null);
 
-  useEffect(()=>{
-    // Crear el juego cuando el contenedor está listo
-    if (mountRef.current){
-      createPhaserGame(mountRef.current);
-    }
-    // Limpieza al salir de la página
-    return ()=> {
-      destroyPhaserGame();
+  useEffect(() => {
+    // crea el juego (lee ?mode=tutorial|mission de la URL)
+    gameRef.current = createPhaserGameWithMode();
+
+    return () => {
+      // destruye limpiamente al salir
+      destroyPhaserGame(gameRef.current || undefined);
+      gameRef.current = null;
     };
-  },[]);
+  }, []);
 
   return (
     <main className="min-h-screen zx-scanline flex items-center justify-center">

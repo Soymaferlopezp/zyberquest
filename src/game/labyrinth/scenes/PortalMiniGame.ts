@@ -27,14 +27,14 @@ export default class PortalMiniGame extends Phaser.Scene {
     this.add.rectangle(w/2, h/2, w, h, 0x000000, 0.6).setScrollFactor(0);
     const panel = this.add.rectangle(w/2, h/2, 520, 240, 0x0A0D0A, 0.96).setStrokeStyle(2, 0x00E5FF);
 
-    this.add.text(w/2, h/2 - 90, "PORTAL — Cifrado César", { color:"#00FF9C", fontSize:"18px" }).setOrigin(0.5);
+    this.add.text(w/2, h/2 - 90, "PORTAL — Caesar cipher", { color:"#00FF9C", fontSize:"18px" }).setOrigin(0.5);
 
     this.lblCipher = this.add.text(w/2, h/2 - 20, "", {
       color:"#E6FFE6", fontSize:"26px", fontFamily: "ui-monospace, monospace"
     }).setOrigin(0.5);
 
     this.lblInstr = this.add.text(w/2, h/2 + 20,
-      "Usa ←/→ (o A/D) para ajustar el desplazamiento\nEnter = validar • Esc = salir",
+      "Use ←/→ (or A/D) to adjust the offset\nEnter = validate • Esc = exit",
       { color:"#9FE870", fontSize:"14px", align:"center" }).setOrigin(0.5);
 
     this.timerText = this.add.text(w/2, h/2 + 78, "", { color:"#F4B728", fontSize:"14px" }).setOrigin(0.5);

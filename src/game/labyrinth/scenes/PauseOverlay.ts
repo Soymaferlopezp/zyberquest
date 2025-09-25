@@ -12,7 +12,7 @@ export default class PauseOverlay extends Phaser.Scene {
       .setStrokeStyle(2, 0x00E5FF)
       .setScrollFactor(0);
 
-    this.add.text(w/2, h/2 - 70, "Pausa", { color:"#00FF9C", fontSize:"20px" }).setOrigin(0.5);
+    this.add.text(w/2, h/2 - 70, "Pause", { color:"#00FF9C", fontSize:"20px" }).setOrigin(0.5);
 
     const mkBtn = (y:number, label:string, onClick:()=>void)=>{
       const btnBg = this.add.rectangle(w/2, y, 220, 36, 0x111111, 1).setStrokeStyle(2, 0xF4B728).setInteractive({ useHandCursor:true });
@@ -22,19 +22,19 @@ export default class PauseOverlay extends Phaser.Scene {
       btnBg.on("pointerout", ()=> btnBg.setAlpha(1));
     };
 
-    mkBtn(h/2 - 20, "Reanudar (P)", ()=>{
+    mkBtn(h/2 - 20, "Resume (P)", ()=>{
       this.scene.stop(); // cierra overlay
       this.scene.resume("LabPlay");
     });
 
-    mkBtn(h/2 + 20, "Reiniciar nivel", ()=>{
+    mkBtn(h/2 + 20, "Restart level", ()=>{
       this.scene.stop();
       this.scene.stop("LabPlay");
       this.scene.launch("HUD");
       this.scene.start("LabPlay");
     });
 
-    mkBtn(h/2 + 60, "Salir al menú", ()=>{
+    mkBtn(h/2 + 60, "Go to menu", ()=>{
       this.scene.stop("LabPlay");
       window.location.href = "/laberintos"; // vuelve a la intro del modo
     });

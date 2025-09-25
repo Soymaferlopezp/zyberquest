@@ -23,12 +23,12 @@ export default class Results extends Phaser.Scene {
     this.add.rectangle(w/2, h/2, w, h, 0x000000, 0.6).setScrollFactor(0);
     const panel = this.add.rectangle(w/2, h/2, 420, 260, 0x0A0D0A, 0.95).setStrokeStyle(2, 0x00E5FF);
 
-    this.add.text(w/2, h/2 - 100, "Resultados", { color:"#00FF9C", fontSize:"20px" }).setOrigin(0.5);
+    this.add.text(w/2, h/2 - 100, "Results", { color:"#00FF9C", fontSize:"20px" }).setOrigin(0.5);
 
     const lines = [
-      `Tiempo restante: ${this.dataIn.timeLeft}s`,
-      `Llaves: ${this.dataIn.keys}`,
-      `Portales superados: ${this.dataIn.portals}`,
+      `Time remaining: ${this.dataIn.timeLeft}s`,
+      `Keys: ${this.dataIn.keys}`,
+      `Outdated portals: ${this.dataIn.portals}`,
       `Score: ${this.dataIn.score}`
     ];
     this.add.text(w/2, h/2 - 56, lines.join("\n"), { color:"#E6FFE6", fontSize:"16px", align:"center" }).setOrigin(0.5,0);
@@ -41,14 +41,14 @@ export default class Results extends Phaser.Scene {
       bg.on("pointerout", ()=> bg.setAlpha(1));
     };
 
-    mkBtn(h/2 + 40, "Reintentar", ()=>{
+    mkBtn(h/2 + 40, "Try again", ()=>{
       this.scene.stop();
       this.scene.stop("LabPlay");
       this.scene.launch("HUD");
       this.scene.start("LabPlay");
     });
 
-    mkBtn(h/2 + 86, "Volver al menú", ()=>{
+    mkBtn(h/2 + 86, "Go to menu", ()=>{
       this.scene.stop("LabPlay");
       window.location.href = "/laberintos";
     });
