@@ -43,7 +43,7 @@ export default function QuestionCard({
                  border-[rgba(0,229,255,0.22)] p-4 md:p-6"
       aria-live="polite"
     >
-      <h2 className="text-lg md:text-xl font-medium mb-4">{question}</h2>
+      <h2 className="text-lg md:text-xl font-Intermediate mb-4">{question}</h2>
 
       <motion.div {...containerAnimProps} className="grid gap-3 will-change-transform">
         {choices.map((c, i) => {

@@ -7,7 +7,7 @@
     "choices": ["ZSH", "ZEC", "ZC", "ZN"],
     "answerIndex": 1,
     "explain": "ZEC is the official ticker symbol for Zcash.",
-    "difficulty": "easy",
+    "difficulty": "Beginner",
     "tags": ["ticker", "basics"]
   },
   {
@@ -18,7 +18,7 @@
     "choices": ["2012", "2016", "2019", "2021"],
     "answerIndex": 1,
     "explain": "Zcash mainnet launched in 2016.",
-    "difficulty": "easy",
+    "difficulty": "Beginner",
     "tags": ["history"]
   },
   {
@@ -29,7 +29,7 @@
     "choices": ["Built-in games", "Smart contracts", "Optional privacy", "Instant fiat payments"],
     "answerIndex": 2,
     "explain": "Zcash provides optional privacy through shielded transactions.",
-    "difficulty": "easy",
+    "difficulty": "Beginner",
     "tags": ["privacy", "shielded"]
   },
   {
@@ -40,7 +40,7 @@
     "choices": ["Zero Fees", "Zero Knowledge", "Zeta Encryption", "Zen Protocol"],
     "answerIndex": 1,
     "explain": "“Z” refers to Zero-Knowledge cryptography used in Zcash.",
-    "difficulty": "easy",
+    "difficulty": "Beginner",
     "tags": ["zk"]
   },
   {
@@ -51,7 +51,7 @@
     "choices": ["t-address", "z-address", "x-address", "w-address"],
     "answerIndex": 1,
     "explain": "z-addresses are shielded/private. t-addresses are transparent.",
-    "difficulty": "easy",
+    "difficulty": "Beginner",
     "tags": ["addresses", "shielded"]
   },
   {
@@ -62,7 +62,7 @@
     "choices": ["MilliZEC", "Zatoshi", "NanoZEC", "MiniZ"],
     "answerIndex": 1,
     "explain": "A Zatoshi is the smallest unit of ZEC (like a satoshi in BTC).",
-    "difficulty": "easy",
+    "difficulty": "Beginner",
     "tags": ["units"]
   },
   {
@@ -73,7 +73,7 @@
     "choices": ["To store movie files", "To record transactions", "To mine digital gold", "To create memes"],
     "answerIndex": 1,
     "explain": "The blockchain is a public ledger that records transactions.",
-    "difficulty": "easy",
+    "difficulty": "Beginner",
     "tags": ["blockchain", "basics"]
   },
   {
@@ -84,7 +84,7 @@
     "choices": ["Litecoin", "Bitcoin", "Ethereum", "Solana"],
     "answerIndex": 1,
     "explain": "Zcash is a Bitcoin-derived chain with added privacy features.",
-    "difficulty": "easy",
+    "difficulty": "Beginner",
     "tags": ["comparisons", "bitcoin"]
   },
   {
@@ -94,8 +94,8 @@
     "question": "What resource is needed to mine Zcash?",
     "choices": ["GPU or ASIC", "PlayStation", "Smartwatch", "WiFi router"],
     "answerIndex": 0,
-    "explain": "Zcash mining uses computing hardware like GPUs or ASICs.",
-    "difficulty": "easy",
+    "explain": "Zcash mining uses computing Advancedware like GPUs or ASICs.",
+    "difficulty": "Beginner",
     "tags": ["mining"]
   },
   {
@@ -106,7 +106,7 @@
     "choices": ["ZecHub", "Zec Army", "Zcash Club", "Zec Alliance"],
     "answerIndex": 0,
     "explain": "ZecHub is a community hub producing educational Zcash content.",
-    "difficulty": "easy",
+    "difficulty": "Beginner",
     "tags": ["community", "education"]
   },
 
@@ -118,7 +118,7 @@
     "choices": ["Save passwords", "Attach private messages to transactions", "Reduce block size", "Validate hashes"],
     "answerIndex": 1,
     "explain": "Encrypted memos allow attaching private messages within shielded outputs.",
-    "difficulty": "medium",
+    "difficulty": "Intermediate",
     "tags": ["memos", "shielded"]
   },
   {
@@ -129,7 +129,7 @@
     "choices": ["t → t", "z → z", "t → z", "None"],
     "answerIndex": 1,
     "explain": "z→z shielded transactions hide sender, receiver, and amount.",
-    "difficulty": "medium",
+    "difficulty": "Intermediate",
     "tags": ["privacy", "shielded"]
   },
   {
@@ -140,7 +140,7 @@
     "choices": ["Zebra", "Zcashd", "Zingo-cli", "Rustnode"],
     "answerIndex": 1,
     "explain": "Zcashd is the original C++ node implementation.",
-    "difficulty": "medium",
+    "difficulty": "Intermediate",
     "tags": ["nodes", "zcashd"]
   },
   {
@@ -151,7 +151,7 @@
     "choices": ["Zebra", "Zcashd", "Zingo-cli", "NodeCash"],
     "answerIndex": 0,
     "explain": "Zebra is the Rust implementation of a Zcash node.",
-    "difficulty": "medium",
+    "difficulty": "Intermediate",
     "tags": ["nodes", "zebra", "rust"]
   },
   {
@@ -159,10 +159,10 @@
     "category": "clients",
     "type": "mcq",
     "question": "What role does Zingo-cli play?",
-    "choices": ["Discord bot", "Command line client for Zcash", "Block explorer", "Hardware wallet"],
+    "choices": ["Discord bot", "Command line client for Zcash", "Block explorer", "Advancedware wallet"],
     "answerIndex": 1,
     "explain": "Zingo-cli is a CLI client/wallet interacting with Zcash.",
-    "difficulty": "medium",
+    "difficulty": "Intermediate",
     "tags": ["clients", "zingo"]
   },
   {
@@ -173,7 +173,7 @@
     "choices": ["Transaction that uses privacy protection", "Transaction on exchanges", "Multichain transaction", "Failed transaction"],
     "answerIndex": 0,
     "explain": "Shielded transactions use zk-proof pools to protect metadata.",
-    "difficulty": "medium",
+    "difficulty": "Intermediate",
     "tags": ["shielded", "privacy"]
   },
   {
@@ -184,7 +184,7 @@
     "choices": ["A credit card", "Run a node or use RPC", "VPN", "Smart contract"],
     "answerIndex": 1,
     "explain": "You interact by running a node or consuming its RPC via a client.",
-    "difficulty": "medium",
+    "difficulty": "Intermediate",
     "tags": ["nodes", "rpc"]
   },
   {
@@ -195,7 +195,7 @@
     "choices": ["The t is transparent, the z is private", "The t is for tokens, the z is for NFTs", "The t does not exist", "Both are identical"],
     "answerIndex": 0,
     "explain": "t-addresses are transparent; z-addresses are shielded/private.",
-    "difficulty": "medium",
+    "difficulty": "Intermediate",
     "tags": ["addresses", "privacy"]
   },
   {
@@ -206,7 +206,7 @@
     "choices": ["SHA-256", "Equihash", "Proof-of-Stake", "Scrypt"],
     "answerIndex": 1,
     "explain": "Zcash uses Equihash as its PoW algorithm.",
-    "difficulty": "medium",
+    "difficulty": "Intermediate",
     "tags": ["mining", "equihash"]
   },
   {
@@ -217,7 +217,7 @@
     "choices": ["Zcash Foundation", "IMF", "Zec DAO", "ZecHub"],
     "answerIndex": 0,
     "explain": "The Zcash Foundation supports protocol development and ecosystem efforts.",
-    "difficulty": "medium",
+    "difficulty": "Intermediate",
     "tags": ["foundation", "funding"]
   },
 
@@ -234,7 +234,7 @@
     ],
     "answerIndex": 0,
     "explain": "Zebra is a Rust node; Zcashd is the original C++ node; Zingo-cli is a CLI client.",
-    "difficulty": "hard",
+    "difficulty": "Advanced",
     "tags": ["match", "nodes", "clients"]
   },
   {
@@ -250,7 +250,7 @@
     ],
     "answerIndex": 0,
     "explain": "Typical flow: build the transaction, (optionally) add memo, sign, then confirmation on-chain.",
-    "difficulty": "hard",
+    "difficulty": "Advanced",
     "tags": ["ordering", "transactions"]
   },
   {
@@ -266,7 +266,7 @@
     ],
     "answerIndex": 1,
     "explain": "Zcash adds optional privacy using shielded pools and zk proofs.",
-    "difficulty": "hard",
+    "difficulty": "Advanced",
     "tags": ["comparisons", "privacy"]
   },
   {
@@ -282,7 +282,7 @@
     ],
     "answerIndex": 1,
     "explain": "Viewing keys allow read-only visibility into shielded activity.",
-    "difficulty": "hard",
+    "difficulty": "Advanced",
     "tags": ["keys", "privacy"]
   },
   {
@@ -298,7 +298,7 @@
     ],
     "answerIndex": 1,
     "explain": "t→z shields the recipient side; the sender (t) remains transparent.",
-    "difficulty": "hard",
+    "difficulty": "Advanced",
     "tags": ["privacy", "flows"]
   },
   {
@@ -314,7 +314,7 @@
     ],
     "answerIndex": 1,
     "explain": "Halo enables recursive proofs eliminating traditional trusted setup requirements.",
-    "difficulty": "hard",
+    "difficulty": "Advanced",
     "tags": ["halo", "zk"]
   },
   {
@@ -330,7 +330,7 @@
     ],
     "answerIndex": 0,
     "explain": "ZK proofs let one prove correctness while keeping inputs private.",
-    "difficulty": "hard",
+    "difficulty": "Advanced",
     "tags": ["zk", "privacy"]
   },
   {
@@ -341,7 +341,7 @@
     "choices": ["Electric Coin Company", "Coinbase", "ZecHub", "Parity"],
     "answerIndex": 0,
     "explain": "ECC (Electric Coin Company) initiated Zcash.",
-    "difficulty": "hard",
+    "difficulty": "Advanced",
     "tags": ["history", "ecc"]
   },
   {
@@ -357,7 +357,7 @@
     ],
     "answerIndex": 0,
     "explain": "Invalid or forged transactions are rejected by consensus rules.",
-    "difficulty": "hard",
+    "difficulty": "Advanced",
     "tags": ["security", "consensus"]
   },
   {
@@ -373,7 +373,7 @@
     ],
     "answerIndex": 1,
     "explain": "Encrypted memos provide private, contextual communication tied to payments.",
-    "difficulty": "hard",
+    "difficulty": "Advanced",
     "tags": ["memos", "privacy"]
   }
 ]

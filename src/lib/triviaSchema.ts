@@ -8,7 +8,7 @@ export const triviaQuestionSchema = z.object({
   choices: z.array(z.string()).length(4),
   answerIndex: z.number().int().min(0).max(3),
   explain: z.string(),
-  difficulty: z.enum(["easy", "medium", "hard"]),
+  difficulty: z.enum(["Beginner", "Intermediate", "Advanced"]),
   tags: z.array(z.string()).default([]),
 });
 

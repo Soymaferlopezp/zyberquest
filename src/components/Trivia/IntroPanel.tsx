@@ -8,16 +8,16 @@ export default function IntroPanel() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "1") setDifficulty("easy");
-      if (e.key === "2") setDifficulty("medium");
-      if (e.key === "3") setDifficulty("hard");
+      if (e.key === "1") setDifficulty("Beginner");
+      if (e.key === "2") setDifficulty("Intermediate");
+      if (e.key === "3") setDifficulty("Advanced");
       if (e.key === "Enter") startGame();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [setDifficulty, startGame]);
 
-  const diffBtn = (d: "easy" | "medium" | "hard") =>
+  const diffBtn = (d: "Beginner" | "Intermediate" | "Advanced") =>
     `px-4 py-2 rounded-lg border transition ${
       difficulty === d
         ? "border-[rgba(249,196,0,0.9)] shadow-[0_0_14px_rgba(249,196,0,0.45)]"
@@ -52,14 +52,14 @@ export default function IntroPanel() {
 
           <div className="space-y-2">
             <div className="flex flex-wrap gap-2">
-              <button className={diffBtn("easy")} onClick={() => setDifficulty("easy")}>
-                1 • Easy (35s)
+              <button className={diffBtn("Beginner")} onClick={() => setDifficulty("Beginner")}>
+                1 • Beginner (35s)
               </button>
-              <button className={diffBtn("medium")} onClick={() => setDifficulty("medium")}>
-                2 • Medium (30s)
+              <button className={diffBtn("Intermediate")} onClick={() => setDifficulty("Intermediate")}>
+                2 • Intermediate (30s)
               </button>
-              <button className={diffBtn("hard")} onClick={() => setDifficulty("hard")}>
-                3 • Hard (25s)
+              <button className={diffBtn("Advanced")} onClick={() => setDifficulty("Advanced")}>
+                3 • Advanced (25s)
               </button>
             </div>
             <p className="text-xs opacity-70">Hotkeys: 1/2/3 to select difficulty</p>

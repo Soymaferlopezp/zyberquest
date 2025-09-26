@@ -114,7 +114,7 @@ export default function HomePage() {
                     className="ml-auto text-[var(--zx-yellow)]"
                     style={{ borderColor: "rgba(255,214,10,0.4)" }}
                   >
-                    New
+                    Beginner
                   </Badge>
                 </CardTitle>
               </CardHeader>
@@ -136,12 +136,12 @@ export default function HomePage() {
             <Card className="bg-zx-mid/40 border-zx-green/25 glow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <KeySquare className="text-zx-green" /> Exploration Mazes
+                  <KeySquare className="text-zx-green" /> Mazes
                                   <Badge
                     className="ml-auto text-[var(--zx-yellow)]"
                     style={{ borderColor: "rgba(255,214,10,0.4)" }}
                   >
-                    Medium
+                    Intermediate
                   </Badge>
                 </CardTitle>
               </CardHeader>
@@ -163,19 +163,19 @@ export default function HomePage() {
             <Card className="bg-zx-mid/40 border-zx-green/25 glow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <LockKeyhole className="text-zx-green" /> Cipher Simulators
+                  <LockKeyhole className="text-zx-green" /> Simulators
                                   <Badge
                     className="ml-auto text-[var(--zx-yellow)]"
                     style={{ borderColor: "rgba(255,214,10,0.4)" }}
                   >
-                    Hard
+                    Advanced
                   </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-zinc-300">
-                Mini-games (Caesar, substitution, visual XOR) inspired by encryption.
+                Mini-games (Substitution, visual XOR) inspired by encryption.
                 <div className="mt-4">
-                  <Link href="/simuladores" aria-label="Go to Simuladores mode">
+                  <Link href="/simulators" aria-label="Go to Simulators mode">
                     <Button size="sm" className="bg-zx-green text-zx-ink hover:bg-zx-cyan">
                       Start
                     </Button>
@@ -201,7 +201,7 @@ export default function HomePage() {
 
         <motion.div {...fadeUp(0.1)} className="rounded-xl border border-zx-green/25 bg-zx-mid/30 p-5 glow">
             <p className="font-mono text-zx-green">2. Choose a mode</p>
-            <p className="mt-2 text-zinc-300">Trivias, Laberintos, or Simuladores.</p>
+            <p className="mt-2 text-zinc-300">Trivia, Mazes, or Simulators.</p>
           </motion.div>
 
           <motion.div {...fadeUp(0.15)} className="rounded-xl border border-zx-green/25 bg-zx-mid/30 p-5 glow">

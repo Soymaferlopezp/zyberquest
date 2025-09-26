@@ -185,7 +185,7 @@ src/
 Flujo de juego
 
 Intro: ilustración + título (amarillo Zcash #F9C400) fuera del panel.
-Panel con explicación, dificultad (Easy/Medium/Hard) y Start.
+Panel con explicación, dificultad (Beginner/Intermediate/Advanced) y Start.
 
 Juego: 10 preguntas barajadas, cada una con opciones barajadas y answerIndex recalculado.
 
@@ -208,11 +208,11 @@ En la Intro también funcionan 1/2/3 para elegir dificultad y Enter para empezar
 
 Dificultad y tiempos
 
-Easy: 35s por pregunta
+Beginner: 35s por pregunta
 
-Medium: 30s
+Intermediate: 30s
 
-Hard: 25s
+Advanced: 25s
 
 El multiplicador de puntaje escala con la racha y un factor por dificultad (1.00 / 1.10 / 1.25).
 
@@ -232,7 +232,7 @@ export type TriviaQuestion = {
   choices: [string, string, string, string];
   answerIndex: number;       // índice correcto dentro de `choices`
   explain: string;           // 1–3 líneas
-  difficulty: "easy" | "medium" | "hard";
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
   tags?: string[];
 };
 
@@ -248,7 +248,7 @@ Edita src/data/trivia-zcash.json y añade ítems con este formato:
   "choices": ["t-address", "z-address", "x-address", "legacy"],
   "answerIndex": 1,
   "explain": "z-addresses use shielded pools to protect metadata.",
-  "difficulty": "medium",
+  "difficulty": "Intermediate",
   "tags": ["addresses", "shielded"]
 }
 
@@ -257,7 +257,7 @@ Reglas:
 
 Siempre 4 opciones y answerIndex apuntando al índice correcto dentro de choices.
 
-difficulty: easy (Level 1), medium (Level 2), hard (Level 3).
+difficulty: Beginner (Level 1), Intermediate (Level 2), Advanced (Level 3).
 
 Explicación breve (1–3 líneas). Puedes incluir un link a “Aprender más” en el futuro.
 

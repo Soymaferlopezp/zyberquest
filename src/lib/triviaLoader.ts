@@ -11,7 +11,7 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-export type Difficulty = "easy" | "medium" | "hard";
+export type Difficulty = "Beginner" | "Intermediate" | "Advanced";
 
 /**
  * Valida el banco, filtra por dificultad (si se pasa),

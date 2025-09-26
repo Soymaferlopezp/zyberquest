@@ -11,18 +11,18 @@ const RUNNERS = [
   {
     id: 'alpha',
     name: 'Runner Alpha',
-    img: '/runner/runner-f.png', // ⬅️ nueva ruta (izquierda)
+    img: '/runner/runner-f.png', 
     width: 380,
     height: 380,
-    accent: '#FFD60A', // amarillo
+    accent: '#FFD60A', 
   },
   {
     id: 'beta',
     name: 'Runner Beta',
-    img: '/runner/runner-m.png', // ⬅️ nueva ruta (derecha)
+    img: '/runner/runner-m.png', 
     width: 380,
     height: 380,
-    accent: '#00E5FF', // cian (cámbialo a #00FF9C si prefieres verde)
+    accent: '#00E5FF', 
   },
 ] as const;
 
@@ -37,7 +37,6 @@ type Mode = {
   iconPath: string;
 };
 
-// Colores por modo: Trivia=amarillo, Laberinto=verde, Simulador=fucsia
 const MODES: Mode[] = [
   {
     title: 'Educational trivia',
@@ -61,8 +60,8 @@ const MODES: Mode[] = [
   },
   {
     title: 'Decryption simulators',
-    href: '/simuladores',
-    desc: 'Break codes (Caesar, substitution, visual XOR) against the clock.',
+    href: '/simulators',
+    desc: 'Break codes (visual XOR) against the clock.',
     accent: '#FF3DBE',
     badge: 'Advanced • 5–8 min',
     meta: 'Timed challenges',
@@ -474,7 +473,6 @@ function ModeCard({
     );
   }
 
-  // Un solo Link → sin anchors anidados
   return (
     <Link href={mode.href} aria-label={`Open ${mode.title}`} className="block">
       {CardInner}

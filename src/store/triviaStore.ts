@@ -82,11 +82,11 @@ function saveRecord(v: number) {
   try { localStorage.setItem(RECORD_KEY, String(v)); } catch {}
 }
 
-const TIME_BY_DIFF: Record<Difficulty, number> = { easy: 35, medium: 30, hard: 25 };
+const TIME_BY_DIFF: Record<Difficulty, number> = { Beginner: 35, Intermediate: 30, Advanced: 25 };
 
 export const useTriviaStore = create<TriviaState>((set, get) => ({
-  difficulty: "easy",
-  perQuestionTime: TIME_BY_DIFF["easy"],
+  difficulty: "Beginner",
+  perQuestionTime: TIME_BY_DIFF["Beginner"],
 
   status: "idle",
   questions: [],
@@ -98,7 +98,7 @@ export const useTriviaStore = create<TriviaState>((set, get) => ({
   bestStreak: 0,
   correctCount: 0,
 
-  timeLeft: TIME_BY_DIFF["easy"],
+  timeLeft: TIME_BY_DIFF["Beginner"],
 
   selectedIndex: null,
   answerState: "idle",
@@ -155,7 +155,7 @@ export const useTriviaStore = create<TriviaState>((set, get) => ({
     const correctIndex = questions[index].answerIndex;
     const isCorrect = selectedIndex === correctIndex;
 
-    const mult = { easy: 1, medium: 1.1, hard: 1.25 }[difficulty];
+    const mult = { Beginner: 1, Intermediate: 1.1, Advanced: 1.25 }[difficulty];
     const base = isCorrect ? 100 : 0;
     const bonus = isCorrect ? (streak + 1) * 10 : 0;
 
