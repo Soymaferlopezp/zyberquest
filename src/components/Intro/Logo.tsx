@@ -4,53 +4,43 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { LogoProps } from './types';
 
 export default function Logo({
-  text = 'ZyberQuest',
+  text = 'ZYBERQUEST',
   glow = true,
   accent = 'green',
   className = '',
 }: LogoProps) {
   const reduce = useReducedMotion();
 
-  const accentHex =
-    accent === 'green' ? '#00FF9C' :
-    accent === 'cyan' ? '#00E5FF' :
-    accent === 'magenta' ? '#FF3DBE' : '#FFFFFF';
+  // Forzamos el esquema pedido: verde + sombra amarilla
+  const green = '#00FF9C';
+  const yellow = '#FFD60A';
 
-  const glowShadow = glow && !reduce
-    ? `drop-shadow(0 0 18px ${accentHex}88) drop-shadow(0 0 42px ${accentHex}44)`
-    : 'none';
+  const glowFilter =
+    glow && !reduce
+      ? `drop-shadow(0 0 22px ${green}66) drop-shadow(0 0 48px ${yellow}44)`
+      : 'none';
+
+  // Simulamos un stroke + leve aberración cromática con text-shadow
+  const layeredTextShadow = glow && !reduce
+    ? `
+      0 0 6px ${green}66,
+      0 0 14px ${yellow}44,
+      1px 0 0 rgba(255, 214, 10, 0.25),
+      -1px 0 0 rgba(0, 229, 255, 0.15)
+    `
+    : undefined;
 
   return (
     <motion.h1
       data-testid="zq-logo"
-      className={`font-['IBM_Plex_Mono',monospace] tracking-[0.08em] text-4xl md:text-6xl ${className}`}
-      style={{
-        color: accentHex,
-        filter: glowShadow as any,
-        textShadow: glow && !reduce ? `0 0 6px ${accentHex}55` : undefined,
-      }}
+      className={`font-['IBM_Plex_Mono',monospace] tracking-[0.1em] text-5xl md:text-7xl ${className}`}
+      style={{ color: green, filter: glowFilter as any, textShadow: layeredTextShadow }}
       aria-label={text}
       initial={{ opacity: 0, y: 8, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.7, ease: 'easeOut' }}
     >
-      <motion.span
-        initial={false}
-        animate={reduce ? {} : { textShadow: [`0 0 6px ${accentHex}55`, `0 0 16px ${accentHex}AA`, `0 0 6px ${accentHex}55`] }}
-        transition={reduce ? undefined : { duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-      >
-        {text}
-      </motion.span>
-      {/* Scanline overlay sutil (solo visual) */}
-      {!reduce && (
-        <span
-          aria-hidden="true"
-          className="relative block"
-          style={{
-            maskImage: 'linear-gradient(transparent 0%, black 15%, black 85%, transparent 100%)',
-          }}
-        />
-      )}
+      {text}
     </motion.h1>
   );
 }

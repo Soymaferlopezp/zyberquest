@@ -9,15 +9,14 @@ import CodeRain from '@/components/Intro/CodeRain';
 import Typewriter from '@/components/Intro/Typewriter';
 import PlayButton from '@/components/Intro/PlayButton';
 import ControlsHint from '@/components/Intro/ControlsHint';
-import { AudioProvider } from '@/components/Intro/audio';
-import MuteToggle from '@/components/Intro/MuteToggle';
+import { AudioProvider, useAudio } from '@/components/Intro/audio';
 import useIntroShortcuts from '@/components/Intro/useIntroShortcuts';
 
 const introLines = [
   'Establishing connection…',
   'Authenticating Runner…',
-  'Access granted.',
-  'Your mission: Connect nodes. Break codes. Master the maze.',
+  'Access granted!',
+  'Your mission: Connect nodes. Break codes. Master the maze..',
 ];
 
 export default function IntroPage() {
@@ -31,11 +30,12 @@ export default function IntroPage() {
 function IntroBody() {
   const router = useRouter();
   const reduce = useReducedMotion();
+  const { startAudio } = useAudio();
 
-  const [canPlay, setCanPlay] = useState(false); 
-  const [exiting, setExiting] = useState(false); 
+  const [canPlay, setCanPlay] = useState(false);
+  const [exiting, setExiting] = useState(false);
 
-  // Watchdog: si algo se retrasa, revela PLAY a los 12s
+  // Watchdog por si acaso
   useEffect(() => {
     const t = window.setTimeout(() => setCanPlay(true), 12000);
     return () => window.clearTimeout(t);
@@ -50,39 +50,26 @@ function IntroBody() {
     window.setTimeout(() => router.push('/menu'), delay);
   };
 
-  const onPlay = () => {
+  const onPlay = async () => {
+    await startAudio();
     if (!canPlay) setCanPlay(true);
     goMenu();
   };
 
-  const onSkip = () => {
+  const onSkip = async () => {
+    await startAudio();
     setCanPlay(true);
     const btn = document.querySelector<HTMLButtonElement>('[data-testid="zq-play"]');
     btn?.focus();
   };
 
-  // Atajos: Enter = Play, Esc = Skip, M = Mute 
   useIntroShortcuts({ onPlay, onSkip });
 
   return (
     <main className="relative min-h-dvh bg-black overflow-hidden">
-      {/* Fondo animable */}
       <CodeRain className="z-0" density={0.6} speed={exiting ? 1.8 : 1.0} />
 
-      {/* Controles flotantes */}
-      <div className="absolute right-4 top-4 z-20 flex items-center gap-2">
-        <MuteToggle />
-        <button
-          type="button"
-          onClick={onSkip}
-          className="rounded-lg border border-white/15 bg-black/40 px-3 py-2 text-xs text-neutral-200 hover:bg-black/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00E5FF]"
-          aria-label="Skip intro"
-        >
-          Skip intro
-        </button>
-      </div>
-
-      {/* Contenido con transición de entrada/salida */}
+      {/* Contenido principal */}
       <AnimatePresence mode="wait">
         {!exiting && (
           <motion.section
@@ -93,17 +80,15 @@ function IntroBody() {
             transition={{ duration: 0.55, ease: 'easeOut' }}
             className="relative z-10 flex min-h-dvh flex-col items-center justify-center gap-6 px-6 text-center"
           >
-            <Logo glow accent="cyan" />
+            <Logo glow />
 
             <Typewriter
               lines={introLines}
               charSpeedMs={18}
               lineDelayMs={350}
               onDone={handleDoneTyping}
-              className="max-w-[72ch] mx-auto"
             />
 
-            {/* Revelado del PLAY al terminar o al saltar */}
             <AnimatePresence>
               {canPlay && (
                 <motion.div
@@ -118,13 +103,31 @@ function IntroBody() {
               )}
             </AnimatePresence>
 
-            <ControlsHint className="mt-6" />
-            <small className="mt-8 text-[11px] text-neutral-500 font-['Inter',sans-serif]">
+            <ControlsHint className="mt-8" />
+            <small className="mt-3 text-[12px] text-neutral-300 font-['Inter',sans-serif]">
               Educational demo to learn about the Zcash ecosystem
             </small>
           </motion.section>
         )}
       </AnimatePresence>
+
+      {/* Saltar intro (chip) en esquina inferior derecha */}
+      <button
+        type="button"
+        onClick={onSkip}
+        className="fixed bottom-4 right-4 z-20 rounded-lg border border-white/15 bg-black/50 px-3 py-2 text-xs text-neutral-100 hover:bg-black/65 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00E5FF]"
+        aria-label="Saltar intro"
+      >
+        Skip intro (Esc)
+      </button>
+
+      {/* Mute chip (visual, recuerda que M alterna) */}
+      <div
+        className="fixed bottom-4 left-4 z-20 rounded-lg border border-white/15 bg-black/50 px-3 py-2 text-xs text-neutral-100"
+        aria-hidden
+      >
+        Sound: <span className="opacity-70">M to alternate</span>
+      </div>
     </main>
   );
 }

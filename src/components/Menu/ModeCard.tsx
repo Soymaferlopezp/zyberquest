@@ -1,138 +1,106 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { motion, useReducedMotion } from 'framer-motion';
-
-type ModeAccentName = 'green' | 'cyan' | 'magenta';
-type ModeAccent = ModeAccentName | `#${string}`;
+import React from 'react';
 
 export type ModeCardProps = {
   title: string;
   href: string;
   desc: string;
-  accent: ModeAccent;      // 'green' | 'cyan' | 'magenta' o un hex (#00E5FF)
+  accent: string;           // hex, ej. #FFD60A
+  badge?: string;           // "Beginner • 4–6 min"
+  meta?: string;            // texto secundario
+  icon?: React.ReactNode;   // mini svg
   disabled?: boolean;
   className?: string;
-  ctaLabel?: string;       // por defecto: "Entrar"
-  hint?: string;           // tooltip nativo: "Tab/Shift+Tab • Enter • 1/2/3"
-  onActivate?: () => void; // permite animar salida antes de navegar
 };
-
-// Tokens → hex
-const ACCENTS: Record<ModeAccentName, `#${string}`> = {
-  green: '#00FF9C',
-  cyan:  '#00E5FF',
-  magenta: '#FF3DBE',
-};
-
-function resolveAccent(accent: ModeAccent): `#${string}` {
-  if (accent in ACCENTS) return ACCENTS[accent as ModeAccentName];
-  return accent as `#${string}`;
-}
 
 export default function ModeCard({
-  title,
-  href,
-  desc,
-  accent,
-  disabled = false,
-  className = '',
-  ctaLabel = 'Entrar',
-  hint = 'Tab/Shift+Tab • Enter • 1/2/3',
-  onActivate,
+  title, href, desc, accent, badge, meta, icon, disabled = false, className = '',
 }: ModeCardProps) {
-  const accentColor = resolveAccent(accent);
-  const reduceMotion = useReducedMotion();
 
-  const baseId = title.replace(/\s+/g, '-').toLowerCase();
-  const titleId = `${baseId}-title`;
-  const descId  = `${baseId}-desc`;
-
-  const content = (
+  const CardInner = (
     <motion.div
       initial={false}
-      whileHover={
-        disabled || reduceMotion
-          ? undefined
-          : { scale: 1.02, boxShadow: '0 0 0 1px rgba(255,255,255,0.03)' }
-      }
-      whileTap={disabled || reduceMotion ? undefined : { scale: 0.98 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-      className={[
-        'rounded-2xl border bg-white/[0.02] p-5',
-        'border-white/10 shadow-[0_0_0_1px_rgba(255,255,255,0.02)]',
-        'focus-visible:outline-none focus-visible:ring-2',
-        'will-change-transform',
-        disabled ? 'opacity-60' : 'hover:brightness-110',
-        className,
-      ].join(' ')}
+      whileHover={disabled ? undefined : { scale: 0.98 }}
+      whileTap={disabled ? undefined : { scale: 0.97 }}
+      className={`group relative rounded-2xl border p-5 bg-white/[0.02]
+        border-white/10 shadow-[0_0_0_1px_rgba(255,255,255,0.02)]
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00E5FF]
+        ${className}`}
       style={{
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        boxShadow: disabled ? undefined : `0 0 0 1px ${accentColor}1A`,
+        // glow sutil base (static) para cohesión
+        boxShadow: `0 0 0 1px rgba(255,255,255,0.02), 0 0 24px ${accent}22`,
       }}
-      aria-labelledby={titleId}
-      aria-describedby={descId}
-      aria-disabled={disabled || undefined}
-      data-accent={accent}
-      onFocus={(e) => {
-        (e.currentTarget as HTMLElement).style.setProperty('--tw-ring-color', accentColor);
-      }}
-      onBlur={(e) => {
-        (e.currentTarget as HTMLElement).style.removeProperty('--tw-ring-color');
-      }}
+      aria-disabled={disabled}
+      tabIndex={-1}
     >
-      <h2
-        id={titleId}
-        className="mb-2 font-['IBM_Plex_Mono',monospace] text-xl"
-        style={{ color: accentColor }}
-      >
-        {title}
-      </h2>
+      {/* Borde de color (hover intensifica) */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 rounded-2xl transition-shadow"
+        style={{ boxShadow: `inset 0 0 0 1px ${accent}44` }}
+      />
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"
+        style={{ boxShadow: `0 0 34px ${accent}33` }}
+      />
 
-      <p id={descId} className="min-h-[3.5rem] text-sm text-neutral-300">
-        {desc}
-      </p>
+      <div className="flex items-start gap-3">
+        {icon && (
+          <div className="mt-0.5 h-9 w-9 shrink-0 rounded-lg border border-white/10 bg-black/40 flex items-center justify-center text-neutral-100">
+            {icon}
+          </div>
+        )}
+        <div className="min-w-0">
+          <h2 className="font-['IBM_Plex_Mono',monospace] text-xl mb-1" style={{ color: accent }}>
+            {title}
+          </h2>
+          <p className="text-sm text-neutral-300">{desc}</p>
+          {(badge || meta) && (
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+              {badge && (
+                <span
+                  className="rounded-md border border-white/15 bg-black/40 px-2 py-0.5 text-neutral-100"
+                  style={{ boxShadow: `0 0 12px ${accent}22` }}
+                >
+                  {badge}
+                </span>
+              )}
+              {meta && <span className="text-neutral-400">{meta}</span>}
+            </div>
+          )}
+        </div>
+      </div>
 
-      <div className="mt-4 flex items-center gap-2">
-        <span className="text-xs text-neutral-200">{ctaLabel}</span>
+      <div className="mt-4 flex items-center gap-3">
+        <span className="text-xs text-neutral-300">
+          Press <kbd className="rounded bg-white/10 px-1.5 py-0.5 text-[11px] border border-white/15">Enter</kbd>
+        </span>
+        <span className="text-xs text-neutral-500">|</span>
+        <span className="text-xs text-neutral-300">Shortcut:</span>
+        <span className="text-xs" style={{ color: accent }}>1 / 2 / 3</span>
+
+        {/* CTA visual (NO <a> interno para evitar anchors anidados) */}
+        <span
+          role="button"
+          aria-hidden
+          className="ml-auto rounded-lg border border-white/15 bg-black/40 px-3 py-1.5 text-xs text-neutral-100 group-hover:bg-black/60"
+        >
+          Entrar
+        </span>
       </div>
     </motion.div>
   );
 
-  if (disabled) {
-    return (
-      <div role="group" aria-label={title} aria-disabled="true" tabIndex={-1} title={hint}>
-        {content}
-      </div>
-    );
-  }
+  if (disabled) return <div role="group" aria-label={title} aria-disabled="true">{CardInner}</div>;
 
+  // Un solo <Link> que envuelve toda la card (sin <a> interno)
   return (
-    <Link
-      href={href}
-      aria-label={`${ctaLabel} ${title}`}
-      aria-keyshortcuts="Enter Space"
-      title={hint}
-      className="block"
-      role="button"
-      onClick={(e) => {
-        if (onActivate) {
-          e.preventDefault();   
-          onActivate();         
-        }
-      }}
-      onKeyDown={(e) => {
-        if (e.code === 'Space' || e.key === ' ') {
-          e.preventDefault();
-          if (onActivate) {
-            onActivate();
-          } else {
-            (e.currentTarget as HTMLAnchorElement).click();
-          }
-        }
-      }}
-    >
-      {content}
+    <Link href={href} aria-label={`Abrir ${title}`} className="block">
+      {CardInner}
     </Link>
   );
 }

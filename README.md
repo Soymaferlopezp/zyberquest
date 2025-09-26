@@ -128,29 +128,176 @@ Stack: Next.js 14 + TypeScript + Tailwind + shadcn/ui + Framer Motion.
      accent: "green" // o "cyan" | "magenta" | "#HEX"
    }
 
-## Modo Trivias (ZyberQuest)
+## Modo Trivias — Zcash Privacy Arcade
 
-**Stack:** Next.js 14 (App Router) + TS + Tailwind + shadcn/ui + Zustand + Zod + Radix Tooltip + Framer Motion  
-**Accesos rápidos:** `1-4` elegir • `Enter` confirmar/siguiente • `P` pausa • `Esc` salir
+Mini-juego tipo arcade con preguntas del ecosistema Zcash (privacidad, shielded, memos, zk-SNARKs, historia, tooling).
+Incluye intro con selector de dificultad, timer, racha/multiplicador, tooltips educativos “¿Por qué?”, hotkeys y persistencia local.
 
-### Datos
-- Banco en `src/data/trivia-zcash.json`
-- Esquema Zod en `src/lib/triviaSchema.ts`
-- Loader valida, baraja preguntas y **baraja choices** recalculando `answerIndex`: `src/lib/triviaLoader.ts`
+Stack
 
-**Formato por ítem:**
-```json
+Next.js 14 (App Router) + TypeScript
+
+Tailwind CSS + shadcn/ui
+
+Zustand (estado del minijuego)
+
+Zod (validación del banco de preguntas)
+
+Radix Tooltip (explicaciones accesibles)
+
+Framer Motion (micro-animaciones, respeta prefers-reduced-motion)
+
+(Opcional) <audio> nativo o Howler para SFX
+
+Instalación rápida
+# deps (si faltan)
+npm i zustand zod @radix-ui/react-tooltip framer-motion
+# (opcional) SFX
+# npm i howler
+
+
+Rutas clave:
+
+/trivias → Intro (ilustración + título fuera del panel, panel con explicación + dificultad + “Start”).
+
+Tras “Start” → flujo de preguntas (10 por partida, barajadas).
+
+Estructura
+src/
+ ├─ app/
+ │   └─ trivias/page.tsx              # Monta la pantalla del modo
+ ├─ components/Trivia/
+ │   ├─ TriviaScreen.tsx              # Orquestador (intro ⇄ juego ⇄ resumen)
+ │   ├─ IntroPanel.tsx                # Panel (explicación + dificultad + start)
+ │   ├─ QuestionCard.tsx              # Enunciado + opciones + feedback
+ │   ├─ ExplanationTooltip.tsx        # Tooltip Radix "¿Por qué?"
+ │   ├─ ScoreHUD.tsx                  # Puntaje, racha, timer circular
+ │   ├─ ControlsBar.tsx               # Atajos / accesibilidad
+ │   └─ SummaryModal.tsx              # Resultados y acciones
+ ├─ store/
+ │   └─ triviaStore.ts                # Zustand (estado, lógica, persistencia)
+ ├─ lib/
+ │   ├─ triviaSchema.ts               # Zod schema de preguntas
+ │   └─ triviaLoader.ts               # Loader: valida, filtra por dificultad, baraja
+ └─ data/
+     └─ trivia-zcash.json             # Banco de preguntas
+
+Flujo de juego
+
+Intro: ilustración + título (amarillo Zcash #F9C400) fuera del panel.
+Panel con explicación, dificultad (Easy/Medium/Hard) y Start.
+
+Juego: 10 preguntas barajadas, cada una con opciones barajadas y answerIndex recalculado.
+
+Confirmación: feedback “decrypt glow” (correcta) o “glitch” (incorrecta) + tooltip “¿Por qué?”.
+
+Resumen: puntaje total, aciertos/total, mejor racha, tiempo promedio.
+Botones Play again y Back to menu (vuelve a la Intro para elegir otro nivel).
+
+Hotkeys
+
+Seleccionar opción: 1/2/3/4
+
+Confirmar / Siguiente: Enter
+
+Pausa / Reanudar: P
+
+Salir al menú principal: Esc
+
+En la Intro también funcionan 1/2/3 para elegir dificultad y Enter para empezar.
+
+Dificultad y tiempos
+
+Easy: 35s por pregunta
+
+Medium: 30s
+
+Hard: 25s
+
+El multiplicador de puntaje escala con la racha y un factor por dificultad (1.00 / 1.10 / 1.25).
+
+Persistencia local
+
+Récord global: zyberquest_trivia_record
+
+Historial de últimas 10 partidas (score, correct/total, racha, tiempo promedio, fecha): zyberquest_trivia_history
+
+Esquema de preguntas (Zod)
+// src/lib/triviaSchema.ts (resumen)
+export type TriviaQuestion = {
+  id: string;
+  category: string;
+  type: "mcq";
+  question: string;
+  choices: [string, string, string, string];
+  answerIndex: number;       // índice correcto dentro de `choices`
+  explain: string;           // 1–3 líneas
+  difficulty: "easy" | "medium" | "hard";
+  tags?: string[];
+};
+
+Cómo agregar preguntas
+
+Edita src/data/trivia-zcash.json y añade ítems con este formato:
+
 {
-  "id": "zcash-001",
+  "id": "lv2-011",
   "category": "privacy",
   "type": "mcq",
-  "question": "Texto...",
-  "choices": ["A","B","C","D"],
-  "answerIndex": 0,
-  "explain": "1–3 líneas",
-  "difficulty": "easy",
-  "tags": ["zk"]
+  "question": "What is a shielded address called?",
+  "choices": ["t-address", "z-address", "x-address", "legacy"],
+  "answerIndex": 1,
+  "explain": "z-addresses use shielded pools to protect metadata.",
+  "difficulty": "medium",
+  "tags": ["addresses", "shielded"]
 }
+
+
+Reglas:
+
+Siempre 4 opciones y answerIndex apuntando al índice correcto dentro de choices.
+
+difficulty: easy (Level 1), medium (Level 2), hard (Level 3).
+
+Explicación breve (1–3 líneas). Puedes incluir un link a “Aprender más” en el futuro.
+
+El loader (triviaLoader.ts) valida con Zod, baraja preguntas y baraja las opciones de cada pregunta recalculando answerIndex.
+Si filtras por dificultad y hay pocas preguntas, cae automáticamente al pool completo.
+
+Accesibilidad
+
+No color-only: Además del color/glow, damos feedback textual con aria-live.
+
+Tooltips accesibles (Radix).
+
+Respeta prefers-reduced-motion: animaciones se desactivan cuando el usuario lo prefiere.
+
+Animaciones y estilo
+
+Framer Motion: entrada orquestada con stagger (agente → título → panel).
+
+“Decrypt glow” (correcto) y “glitch shake” (incorrecto) en QuestionCard.
+
+Fondo con degradados negro + amarillo Zcash (#F9C400) + cian (#00E5FF) y sombras suaves.
+
+Tipografías de proyecto: IBM Plex Mono (UI), Inter (texto).
+
+SFX (opcional)
+
+Puedes usar <audio> nativo. Ejemplo sencillo en src/lib/sfx.ts y archivos en /public/sfx/:
+
+correct.mp3, incorrect.mp3, tick.mp3 (últimos 5s).
+Luego llama a playOk() / playNo() en el store, dentro de confirm().
+
+Decisiones técnicas
+
+Zustand para estado del minijuego → API chica, predecible y sin boilerplate.
+
+Zod para “bendecir” el JSON → evita fallos por datos mal formados.
+
+requestAnimationFrame para el timer → menos “drift” que setInterval, sincronizado al frame.
+
+Radix para tooltips → accesibilidad out-of-the-box.
 
 
 ZyberQuest — Laberintos de exploración 
