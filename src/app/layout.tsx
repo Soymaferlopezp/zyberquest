@@ -10,18 +10,16 @@ export const metadata: Metadata = {
   description: "Arcade cypherpunk to learn privacy, ZK, and encryption.",
   keywords: ["ZyberQuest", "cypherpunk", "Zcash", "ZK", "encryption", "privacy", "arcade"],
   authors: [{ name: "BlockBears Team" }],
+    icons: {
+    icon: "/favicon.ico",
+  },
   openGraph: {
     title: "ZyberQuest — Cypherpunk Arcade",
-    description: "Conecta nodos. Rompe cifrados. Domina el laberinto.",
+    description: "Connect nodes. Break codes. Master the maze.",
     url: "https://zyberquest.vercel.app",
     siteName: "ZyberQuest",
     locale: "en_US",
     type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    site: "@zyberquest",
-    creator: "@blockbears",
   },
 };
 

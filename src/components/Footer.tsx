@@ -18,9 +18,6 @@ export function Footer() {
           >
             Donation
           </a>
-          <a href="#" className="hover:text-zx-cyan">
-            Docs
-          </a>
         </nav>
       </div>
     </footer>

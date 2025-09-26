@@ -4,7 +4,7 @@
 > An off-chain arcade game to learn privacy, ZK, and encryption with a neon, Matrix-like vibe.
 
 <p align="center">
-  <img alt="ZyberQuest banner" src="public/zyberquest.png" width="800">
+  <img alt="ZyberQuest banner" src="public/zyberquest.png" width="500">
 </p>
 
 <div align="center">
@@ -339,14 +339,14 @@ Edit lib/modes.ts and push a new item to MODES:
 
 ## 🗺 Roadmap
 
-✅ MVP: three modes, basic UX, accessibility passes
-✅ Content: more questions, mazes, cipher puzzles
-✅ Polish: animations, SFX, code-rain, advanced HUD
-⏳ Future on-chain: ZK/identity hooks & rewards
+- ✅ MVP: three modes, basic UX, accessibility passes
+- ✅ Content: more questions, mazes, cipher puzzles
+- ✅ Polish: animations, SFX, code-rain, advanced HUD
+- ⏳ Future on-chain: ZK/identity hooks & rewards
 
 ---
 
-## 👥 Team & Credits
+## 👥 Team 
 
 Developed by BlockBears 🐻
 

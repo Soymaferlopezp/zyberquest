@@ -76,7 +76,6 @@ export default function HomePage() {
           <Link href="#modes" aria-label="View modes">
             <Button
               variant="secondary"
-              // Borde usando amarillo del globals.css
               className="bg-transparent text-white hover:border-zx-cyan/50"
               style={{ borderColor: "rgba(255,214,10,0.4)" }}
             >
@@ -173,7 +172,7 @@ export default function HomePage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-zinc-300">
-                Mini-games (Substitution, visual XOR) inspired by encryption.
+                Mini-game visual XOR inspired by encryption.
                 <div className="mt-4">
                   <Link href="/simulators" aria-label="Go to Simulators mode">
                     <Button size="sm" className="bg-zx-green text-zx-ink hover:bg-zx-cyan">
@@ -227,14 +226,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* SCREENSHOTS — evita recortes (aspect-video + object-contain) */}
+      {/* SCREENSHOTS */}
       <section id="shots" className="container-zx py-12">
         <h2 className="text-2xl md:text-3xl font-mono text-zx-cyan">
-          Screenshots & Mockups <span className="text-base align-middle text-[var(--zx-yellow)]">[preview]</span>
+          Screenshots & Mockups
         </h2>
         <p className="mt-2 text-zinc-400">
-          Put your images in <code className="font-mono">/public/mockups/</code>.
-          Recommended: 16:9 (e.g. 1600×900 or 1920×1080) to fit the frame.
+          Preview of the games you'll get in Zyberquest
         </p>
 
         <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
