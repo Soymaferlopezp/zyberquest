@@ -5,6 +5,9 @@ import { inter, plexMono } from "./fonts";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: "ZyberQuest — Cypherpunk Arcade",
   description: "Arcade cypherpunk to learn privacy, ZK, and encryption.",
