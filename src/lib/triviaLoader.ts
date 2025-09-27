@@ -1,9 +1,9 @@
-import bankRaw from "@/data/trivia-zcash.json";
-import { triviaBankSchema, TriviaQuestion } from "./triviaSchema";
+import triviaData from "@/data/trivia-zcash.json";
+import { triviaArraySchema, type TriviaQuestion } from "./triviaSchema";
 
-/** Fisher–Yates */
+// Fisher–Yates
 function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
+  const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [a[i], a[j]] = [a[j], a[i]];
@@ -11,36 +11,72 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-export type Difficulty = "Beginner" | "Intermediate" | "Advanced";
+/** Baraja options y recalcula answerIndex */
+function shuffleChoices(q: TriviaQuestion): Pick<TriviaQuestion, "choices" | "answerIndex"> {
+  const pairs = q.choices.map((text, idx) => ({ text, idx }));
+  const shuffled = shuffle(pairs);
+  const choices = shuffled.map(p => p.text);
+  const answerIndex = shuffled.findIndex(p => p.idx === q.answerIndex);
+  return { choices, answerIndex };
+}
+
+/** Acepta ambas notaciones y normaliza a las etiquetas del JSON */
+type DifficultyArg =
+  
+  | "Beginner" | "Intermediate" | "Advanced";
+
+function normalizeToLabel(d: DifficultyArg | string): "Beginner" | "Intermediate" | "Advanced" | null {
+  const s = String(d).toLowerCase();
+  if (s === "easy" || s === "beginner") return "Beginner";
+  if (s === "medium" || s === "intermediate") return "Intermediate";
+  if (s === "hard" || s === "advanced") return "Advanced";
+  return null;
+}
+
+type PrepareOpts = {
+  count: number;                 // normalmente 10
+  difficulty: DifficultyArg;     // venga como venga, lo normalizamos
+};
 
 /**
- * Valida el banco, filtra por dificultad (si se pasa),
- * baraja preguntas, **baraja choices** y recalcula answerIndex,
- * y retorna un slice de `count`.
+ * Devuelve preguntas EXCLUSIVAMENTE de la modalidad pedida (por etiqueta del JSON),
+ * sin duplicar. Si hay exactamente 10, devuelve esas 10 barajadas; si hay >10, toma 10 únicas.
+ * Siempre baraja las choices y recalcula answerIndex por pregunta.
  */
-export function prepareTrivia(params?: { count?: number; difficulty?: Difficulty }): TriviaQuestion[] {
-  const count = params?.count ?? 10;
-  const difficulty = params?.difficulty;
+export function prepareTrivia({ count, difficulty }: PrepareOpts): TriviaQuestion[] {
+  // 1) Parse y tipado del JSON
+  const parsed = triviaArraySchema.safeParse(triviaData);
+  if (!parsed.success) {
+    console.error("[triviaLoader] Invalid trivia JSON:", parsed.error.flatten());
+    return [];
+  }
+  const all = parsed.data as TriviaQuestion[];
 
-  const parsed = triviaBankSchema.parse(bankRaw);
+  // 2) Normalizar la dificultad a la etiqueta del JSON
+  const label = normalizeToLabel(difficulty);
+  if (!label) {
+    console.error(`[triviaLoader] Dificultad desconocida: "${difficulty}"`);
+    return [];
+  }
 
-  // Filtra por dificultad si aplica; si hay pocas, cae back a todo el banco
-  const pool = difficulty
-    ? parsed.filter(q => q.difficulty === difficulty)
-    : parsed;
+  // 3) Filtrar SOLO por esa modalidad
+  const pool = all.filter(q => q.difficulty === label);
+  if (pool.length === 0) {
+    console.warn(`[triviaLoader] No hay preguntas para la dificultad "${label}".`);
+    return [];
+  }
 
-  const base = (pool.length >= Math.min(count, 4)) ? pool : parsed;
+  // 4) Selección sin duplicados
+  const poolShuffled = shuffle(pool);
+  const take = Math.min(count, poolShuffled.length);
+  const selected = poolShuffled.slice(0, take);
 
-  // Barajar preguntas
-  const shuffledQs = shuffle(base);
-
-  // Para cada pregunta, baraja choices y recalcula answerIndex
-  const normalized = shuffledQs.map((q) => {
-    const correctText = q.choices[q.answerIndex];
-    const choicesShuffled = shuffle(q.choices);
-    const newAnswerIndex = Math.max(0, choicesShuffled.findIndex(c => c === correctText));
-    return { ...q, choices: choicesShuffled, answerIndex: newAnswerIndex } as TriviaQuestion;
+  // 5) Barajar choices y recalcular índice
+  const withShuffledChoices = selected.map((q) => {
+    const { choices, answerIndex } = shuffleChoices(q);
+    return { ...q, choices, answerIndex } as TriviaQuestion;
   });
 
-  return normalized.slice(0, Math.min(count, normalized.length));
+  // 6) Barajar orden final de preguntas
+  return shuffle(withShuffledChoices);
 }

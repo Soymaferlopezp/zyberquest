@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import type { TriviaQuestion } from "@/lib/triviaSchema";
-import { prepareTrivia, type Difficulty } from "@/lib/triviaLoader";
+import { prepareTrivia } from "@/lib/triviaLoader";
 
+export type Difficulty = "easy" | "medium" | "hard";
 export type Status = "idle" | "playing" | "paused" | "ended";
 export type AnswerState = "idle" | "correct" | "incorrect";
 
@@ -15,41 +16,34 @@ type SessionSummary = {
 };
 
 type TriviaState = {
-  // config actual
   difficulty: Difficulty;
   perQuestionTime: number;
 
-  // game state
   status: Status;
   questions: TriviaQuestion[];
   index: number;
   total: number;
 
-  // scoring
   score: number;
   streak: number;
   bestStreak: number;
   correctCount: number;
 
-  // timer
   timeLeft: number;
 
-  // UI
   selectedIndex: number | null;
   answerState: AnswerState;
   lastCorrect: boolean | null;
 
-  // métricas
   _elapsedTotal: number;
   _questionTimes: number[];
 
-  // persistencia
   record: number;
   history: SessionSummary[];
 
-  // actions
   setDifficulty: (d: Difficulty) => void;
   startGame: () => void;
+  continueToNextLevel: () => boolean;
   selectChoice: (i: number) => void;
   confirm: () => void;
   next: () => void;
@@ -57,13 +51,13 @@ type TriviaState = {
   pause: () => void;
   resume: () => void;
   endGame: () => void;
-  resetToIntro: () => void; // 👈 nuevo
+  resetToIntro: () => void;
 
   getSummary: () => SessionSummary;
 };
 
 const HISTORY_KEY = "zyberquest_trivia_history";
-const RECORD_KEY = "zyberquest_trivia_record";
+const RECORD_KEY  = "zyberquest_trivia_record";
 
 function loadHistory(): SessionSummary[] {
   if (typeof window === "undefined") return [];
@@ -82,11 +76,18 @@ function saveRecord(v: number) {
   try { localStorage.setItem(RECORD_KEY, String(v)); } catch {}
 }
 
-const TIME_BY_DIFF: Record<Difficulty, number> = { Beginner: 35, Intermediate: 30, Advanced: 25 };
+const TIME_BY_DIFF = { easy: 35, medium: 30, hard: 25 } as const;
+const NEXT_BY_DIFF = { easy: "medium", medium: "hard", hard: null } as const;
+
+function safeTime(d: Difficulty) {
+  const t = TIME_BY_DIFF[d];
+  return Number.isFinite(t) && t > 0 ? t : 30;
+}
+const safeNum = (n: number) => (Number.isFinite(n) ? n : 0);
 
 export const useTriviaStore = create<TriviaState>((set, get) => ({
-  difficulty: "Beginner",
-  perQuestionTime: TIME_BY_DIFF["Beginner"],
+  difficulty: "easy",
+  perQuestionTime: TIME_BY_DIFF.easy,
 
   status: "idle",
   questions: [],
@@ -98,7 +99,7 @@ export const useTriviaStore = create<TriviaState>((set, get) => ({
   bestStreak: 0,
   correctCount: 0,
 
-  timeLeft: TIME_BY_DIFF["Beginner"],
+  timeLeft: TIME_BY_DIFF.easy,
 
   selectedIndex: null,
   answerState: "idle",
@@ -111,15 +112,20 @@ export const useTriviaStore = create<TriviaState>((set, get) => ({
   history: loadHistory(),
 
   setDifficulty: (d) => {
-    const t = TIME_BY_DIFF[d];
+    const t = safeTime(d);
     set({ difficulty: d, perQuestionTime: t, timeLeft: t });
   },
 
   startGame: () => {
-    const { difficulty, perQuestionTime } = get();
-    const qs = prepareTrivia({ count: 10, difficulty });
+    const d = get().difficulty;
+    const t = safeTime(d);
+    const qs = prepareTrivia({ count: 10, difficulty: d as any });
     set({
       status: "playing",
+      difficulty: d,
+      perQuestionTime: t,
+      timeLeft: t,
+
       questions: qs,
       index: 0,
       total: qs.length,
@@ -129,7 +135,6 @@ export const useTriviaStore = create<TriviaState>((set, get) => ({
       bestStreak: 0,
       correctCount: 0,
 
-      timeLeft: perQuestionTime,
       selectedIndex: null,
       answerState: "idle",
       lastCorrect: null,
@@ -139,12 +144,44 @@ export const useTriviaStore = create<TriviaState>((set, get) => ({
     });
   },
 
+  continueToNextLevel: () => {
+    const curr = get().difficulty;
+    const next = NEXT_BY_DIFF[curr];
+    if (!next) return false;
+    const t = safeTime(next);
+    const qs = prepareTrivia({ count: 10, difficulty: next as any });
+    set({
+      status: "playing",
+      difficulty: next,
+      perQuestionTime: t,
+      timeLeft: t,
+
+      questions: qs,
+      index: 0,
+      total: qs.length,
+
+      score: 0,
+      streak: 0,
+      bestStreak: 0,
+      correctCount: 0,
+
+      selectedIndex: null,
+      answerState: "idle",
+      lastCorrect: null,
+
+      _elapsedTotal: 0,
+      _questionTimes: [],
+    });
+    return true;
+  },
+
   selectChoice: (i) => {
     const { status, answerState } = get();
     if (status !== "playing" || answerState !== "idle") return;
     set({ selectedIndex: i });
   },
 
+  // 🔐 Robust: nunca NaN en score
   confirm: () => {
     const {
       status, answerState, selectedIndex, questions, index,
@@ -155,14 +192,18 @@ export const useTriviaStore = create<TriviaState>((set, get) => ({
     const correctIndex = questions[index].answerIndex;
     const isCorrect = selectedIndex === correctIndex;
 
-    const mult = { Beginner: 1, Intermediate: 1.1, Advanced: 1.25 }[difficulty];
-    const base = isCorrect ? 100 : 0;
+    const MULT: Record<Difficulty, number> = { easy: 1, medium: 1.1, hard: 1.25 };
+    const mult = MULT[difficulty] ?? 1;
+
+    const prevScore = safeNum(score);
+    const base  = isCorrect ? 100 : 0;
     const bonus = isCorrect ? (streak + 1) * 10 : 0;
 
-    const elapsed = Math.max(0, perQuestionTime - timeLeft);
+    const elapsed = Math.max(0, safeNum(perQuestionTime) - safeNum(timeLeft));
+    const newScore = Math.round(prevScore + (base + bonus) * mult);
 
     set({
-      score: Math.round(score + (base + bonus) * mult),
+      score: newScore,
       streak: isCorrect ? streak + 1 : 0,
       bestStreak: isCorrect ? Math.max(bestStreak, streak + 1) : bestStreak,
       answerState: isCorrect ? "correct" : "incorrect",
@@ -174,11 +215,13 @@ export const useTriviaStore = create<TriviaState>((set, get) => ({
   },
 
   next: () => {
-    const { index, questions, perQuestionTime } = get();
-    if (index + 1 >= questions.length) { get().endGame(); return; }
+    const state = get();
+    if (state.index + 1 >= state.questions.length) { get().endGame(); return; }
+    const t = safeTime(state.difficulty);
     set({
-      index: index + 1,
-      timeLeft: perQuestionTime,
+      index: state.index + 1,
+      timeLeft: t,
+      perQuestionTime: t,
       selectedIndex: null,
       answerState: "idle",
       lastCorrect: null,
@@ -188,15 +231,18 @@ export const useTriviaStore = create<TriviaState>((set, get) => ({
   tick: (dt) => {
     const { status, answerState, timeLeft, perQuestionTime, _elapsedTotal, _questionTimes } = get();
     if (status !== "playing" || answerState !== "idle") return;
-    const t = Math.max(0, timeLeft - dt);
+
+    const clamped = Math.min(Math.max(dt, 0), 0.2);
+    const t = Math.max(0, safeNum(timeLeft) - clamped);
+
     if (t === 0) {
       set({
         timeLeft: 0,
         answerState: "incorrect",
         lastCorrect: false,
         streak: 0,
-        _elapsedTotal: _elapsedTotal + perQuestionTime,
-        _questionTimes: [..._questionTimes, perQuestionTime],
+        _elapsedTotal: _elapsedTotal + safeNum(perQuestionTime),
+        _questionTimes: [..._questionTimes, safeNum(perQuestionTime)],
       });
       return;
     }
@@ -210,7 +256,7 @@ export const useTriviaStore = create<TriviaState>((set, get) => ({
     const { score, correctCount, total, bestStreak, _elapsedTotal, history, record } = get();
     const answered = Math.max(1, total);
     const summary: SessionSummary = {
-      score,
+      score: safeNum(score),
       correct: correctCount,
       total,
       bestStreak,
@@ -219,14 +265,14 @@ export const useTriviaStore = create<TriviaState>((set, get) => ({
     };
     const newHistory = [summary, ...history].slice(0, 10);
     saveHistory(newHistory);
-    const newRecord = Math.max(record || 0, score);
+    const newRecord = Math.max(record || 0, safeNum(score));
     saveRecord(newRecord);
     set({ status: "ended", history: newHistory, record: newRecord });
   },
 
-  // 👇 resetea para mostrar la INTRO nuevamente
   resetToIntro: () => {
-    const { perQuestionTime } = get();
+    const d = get().difficulty;
+    const t = safeTime(d);
     set({
       status: "idle",
       questions: [],
@@ -236,7 +282,8 @@ export const useTriviaStore = create<TriviaState>((set, get) => ({
       streak: 0,
       bestStreak: 0,
       correctCount: 0,
-      timeLeft: perQuestionTime,
+      timeLeft: t,
+      perQuestionTime: t,
       selectedIndex: null,
       answerState: "idle",
       lastCorrect: null,
@@ -249,7 +296,7 @@ export const useTriviaStore = create<TriviaState>((set, get) => ({
     const { score, correctCount, total, bestStreak, _elapsedTotal } = get();
     const answered = Math.max(1, total);
     return {
-      score,
+      score: safeNum(score),
       correct: correctCount,
       total,
       bestStreak,

@@ -53,13 +53,13 @@ export default function IntroPanel() {
           <div className="space-y-2">
             <div className="flex flex-wrap gap-2">
               <button className={diffBtn("Beginner")} onClick={() => setDifficulty("Beginner")}>
-                1 • Beginner (35s)
+                1.- Beginner
               </button>
               <button className={diffBtn("Intermediate")} onClick={() => setDifficulty("Intermediate")}>
-                2 • Intermediate (30s)
+                2.- Intermediate
               </button>
               <button className={diffBtn("Advanced")} onClick={() => setDifficulty("Advanced")}>
-                3 • Advanced (25s)
+                3.- Advanced
               </button>
             </div>
             <p className="text-xs opacity-70">Hotkeys: 1/2/3 to select difficulty</p>

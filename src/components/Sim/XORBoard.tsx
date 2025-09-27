@@ -269,10 +269,19 @@ function Panel({
             }
             if (variant === 'R' && result && target) {
               const shouldBeOne = target[r][c] === 1
-              if (!shouldBeOne) {
-                styleClass = 'bg-transparent'
+              // Mapeo visual:
+              // 1) Letra correcta encendida → AMARILLO
+              // 2) Letra pendiente (debería ser 1 y está 0) → gris fuerte (blanco/70)
+              // 3) Fondo correcto apagado (debería ser 0 y está 0) → gris suave (blanco/10)
+              // 4) Fondo encendido por error (debería ser 0 y está 1) → gris medio (blanco/40-70)
+              if (shouldBeOne && isOne) {
+                styleClass = 'bg-[var(--zx-yellow)]'          // (1)
+              } else if (shouldBeOne && !isOne) {
+                styleClass = 'bg-white/70'                    // (2) letra pendiente
+              } else if (!shouldBeOne && !isOne) {
+                styleClass = 'bg-white/10'                    // (3) fondo correcto
               } else {
-                styleClass = isOne ? 'bg-[var(--zx-yellow)]' : 'bg-white/70'
+                styleClass = 'bg-white/40'                    // (4) extra encendido fuera de letra
               }
             }
 

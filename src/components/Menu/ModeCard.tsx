@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 export type ModeCardProps = {
   title: string;
@@ -14,10 +15,13 @@ export type ModeCardProps = {
   icon?: React.ReactNode;   // mini svg
   disabled?: boolean;
   className?: string;
+  hint?: string;
+  ctaLabel?: string;
+  onActivate?: (href: string) => void;
 };
 
 export default function ModeCard({
-  title, href, desc, accent, badge, meta, icon, disabled = false, className = '',
+  title, href, desc, accent, badge, meta, icon, disabled = false, ctaLabel = 'Play', className = '',
 }: ModeCardProps) {
 
   const CardInner = (

@@ -1,73 +1,49 @@
 "use client";
 
-import { motion } from "framer-motion";
-
 type ScoreHUDProps = {
   score: number;
   streak: number;
   questionNumber: number;
   total: number;
-  timeLeft: number;   // segundos restantes
-  maxTime: number;    // segundos máximos (perQuestionTime)
+  timeLeft: number; // en segundos
+  maxTime: number;  // en segundos (constante por pregunta)
 };
 
 export default function ScoreHUD({
-  score,
-  streak,
-  questionNumber,
-  total,
-  timeLeft,
-  maxTime,
+  score, streak, questionNumber, total, timeLeft, maxTime,
 }: ScoreHUDProps) {
-  const pct = Math.max(0, Math.min(1, timeLeft / Math.max(1, maxTime)));
-  const R = 16;
-  const C = 2 * Math.PI * R;
-  const dash = C * pct;
+  const tMax = Math.max(1, Number.isFinite(maxTime) ? maxTime : 30);
+  const tLeft = Math.min(tMax, Math.max(0, Number.isFinite(timeLeft) ? timeLeft : 0));
+  const pct = 100 * (tLeft / tMax);
 
   return (
-    <header className="flex items-center justify-between rounded-2xl border border-white/10 p-3 bg-white/5">
-      <div className="flex items-center gap-4">
-        <div className="text-sm">
-          Score: <span className="font-mono">{score}</span>
-        </div>
-        <div className="text-sm">
-          Streak:{" "}
-          <motion.span
-            key={streak}
-            initial={{ scale: 1 }}
-            animate={{ scale: streak > 0 ? 1.08 : 1 }}
-            transition={{ type: "spring", stiffness: 260, damping: 14, duration: 0.25 }}
-            className="font-mono"
-            aria-live="polite"
-          >
-            {streak}
-          </motion.span>
-        </div>
-      </div>
-
+    <div className="grid grid-cols-3 gap-3 items-center">
       <div className="text-sm">
-        Question <span className="font-mono">{questionNumber}</span>/<span className="font-mono">{total}</span>
+        <div className="opacity-70">Score</div>
+        <div className="font-mono text-lg">{score}</div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true">
-          <circle cx="20" cy="20" r={R} stroke="rgba(255,255,255,0.15)" strokeWidth="4" fill="none" />
-          <circle
-            cx="20"
-            cy="20"
-            r={R}
-            stroke="rgba(0,229,255,0.9)"
-            strokeWidth="4"
-            fill="none"
-            strokeDasharray={`${dash} ${C - dash}`}
-            strokeLinecap="round"
-            transform="rotate(-90 20 20)"
-          />
-        </svg>
-        <div className="text-sm">
-          ⏱ <span className="font-mono">{Math.ceil(timeLeft)}s</span>
+      <div className="justify-self-center text-center">
+        <div
+          className="relative w-16 h-16 rounded-full grid place-items-center"
+          style={{
+            background: `conic-gradient(#F9C400 ${pct}%, rgba(255,255,255,0.1) 0)`,
+          }}
+          aria-label="Timer"
+        >
+          <div className="absolute inset-1 rounded-full bg-black grid place-items-center text-sm font-mono">
+            {Math.ceil(tLeft)}
+          </div>
+        </div>
+        <div className="text-xs opacity-70 mt-1">
+          {questionNumber} / {total}
         </div>
       </div>
-    </header>
+
+      <div className="text-right text-sm">
+        <div className="opacity-70">Streak</div>
+        <div className="font-mono text-lg">{streak}×</div>
+      </div>
+    </div>
   );
 }
