@@ -4,12 +4,15 @@ import { useEffect, useRef } from "react";
 import { createPhaserGameWithMode, destroyPhaserGame } from "@/game/labyrinth";
 import type Phaser from "phaser";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default function LaberintosPlayPage() {
   const mountRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Phaser.Game | null>(null);
 
   useEffect(() => {
-    // crea el juego (lee ?mode=tutorial|mission de la URL)
+    
     gameRef.current = createPhaserGameWithMode();
 
     return () => {
