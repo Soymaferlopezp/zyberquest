@@ -23,41 +23,39 @@ export default function SummaryModal() {
 
   if (!open || !lastSummary) return null
 
+  const label = (d: 'beginner'|'intermediate'|'advanced') =>
+    d === 'beginner' ? 'Beginner' : d === 'intermediate' ? 'Intermediate' : 'Advanced'
+
   // Cierra modal y ejecuta acción en el siguiente frame
   const closeThen = (fn: () => void) => {
     setOpen(false)
-    // Limpia estado de juego y modal
     reset()
-    // Espera al siguiente frame para evitar parpadeo/overlay
-    requestAnimationFrame(() => {
-      fn()
-    })
+    requestAnimationFrame(() => fn())
   }
 
   const playAgain = () => {
-    closeThen(() => {
-      start(lastSummary.difficulty) // misma dificultad
-    })
+    closeThen(() => start(lastSummary.difficulty))
   }
 
-  // Next level: Beginner -> Intermediate, Intermediate -> Advanced
   const nextLevel =
-    lastSummary.difficulty === 'Beginner' ? 'Intermediate' :
-    lastSummary.difficulty === 'Intermediate' ? 'Advanced' :
-    null as 'Intermediate' | 'Advanced' | null
+    lastSummary.difficulty === 'beginner' ? 'intermediate' :
+    lastSummary.difficulty === 'intermediate' ? 'advanced' :
+    null as 'intermediate' | 'advanced' | null
 
   const goNext = () => {
     if (!nextLevel) return
-    closeThen(() => {
-      start(nextLevel)
-    })
+    closeThen(() => start(nextLevel))
   }
 
   const backToMenu = () => {
-    closeThen(() => {
-      router.push('/simulators') // intro del simulador
-    })
+    closeThen(() => router.push('/simulators'))
   }
+
+  const gradeText = lastSummary.grade
+    ? lastSummary.grade === 'perfect'
+      ? 'Perfect Clean (100%)'
+      : 'Decrypted (70%)'
+    : '—'
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 backdrop-blur-sm">
@@ -66,22 +64,21 @@ export default function SummaryModal() {
 
         <div className="mt-4 grid gap-2 text-sm">
           <Row label="Mode" value="Visual XOR" />
-          <Row label="Difficulty" value={cap(lastSummary.difficulty)} />
+          <Row label="Difficulty" value={label(lastSummary.difficulty)} />
           <Row label="Outcome" value={cap(lastSummary.outcome)} />
+          <Row label="Grade" value={gradeText} />
           <Row label="Solved in" value={`${timeUsed}s`} />
           <Row label="Score" value={String(lastSummary.score)} />
           <Row label="Best Streak" value={String(lastSummary.streakAfter)} />
-          <Row label="High score (XOR)" value={String(highScore)} />  
-          <Row label="Grade" value={lastSummary.grade ? (lastSummary.grade === 'perfect' ? 'Perfect Clean (100%)' : 'Decrypted (70%)') : '—'} />
-
+          <Row label="High score (XOR)" value={String(highScore)} />
         </div>
 
         <div className="mt-6 flex flex-wrap gap-3">
           <button
             onClick={playAgain}
-            className="rounded-md bg-[var(--zx-magenta)] px-4 py-2 font-Intermediate text-black hover:ring-2 hover:ring-[var(--zx-yellow)] focus:outline-none focus:ring-2 focus:ring-[var(--zx-yellow)]"
+            className="rounded-md bg-[var(--zx-magenta)] px-4 py-2 font-medium text-black hover:ring-2 hover:ring-[var(--zx-yellow)] focus:outline-none focus:ring-2 focus:ring-[var(--zx-yellow)]"
           >
-            Play again ({cap(lastSummary.difficulty)})
+            Play again ({label(lastSummary.difficulty)})
           </button>
 
           {nextLevel && (
@@ -89,7 +86,7 @@ export default function SummaryModal() {
               onClick={goNext}
               className="rounded-md border border-white/20 px-4 py-2 hover:border-[var(--zx-yellow)] focus:outline-none focus:ring-2 focus:ring-[var(--zx-yellow)]"
             >
-              Next level → {cap(nextLevel)}
+              Next level → {label(nextLevel)}
             </button>
           )}
 
@@ -109,7 +106,7 @@ function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-4">
       <div className="opacity-70">{label}</div>
-      <div className="font-Intermediate">{value}</div>
+      <div className="font-medium">{value}</div>
     </div>
   )
 }

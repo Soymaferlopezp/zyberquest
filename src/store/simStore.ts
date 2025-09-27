@@ -1,11 +1,15 @@
 // store/simStore.ts
 import { create } from 'zustand'
 
-export type Difficulty = 'Beginner' | 'Intermediate' | 'Advanced'
+export type Difficulty = 'beginner' | 'intermediate' | 'advanced'
 type Outcome = 'solved' | 'expired'
-export type Grade = 'perfect' | 'partial' // perfect=100%, partial=70%
+export type Grade = 'perfect' | 'partial' // 100% vs 70%
 
-const DIFF_TIME: Record<Difficulty, number> = { Beginner: 90, Intermediate: 75, Advanced: 60 }
+const DIFF_TIME: Record<Difficulty, number> = {
+  beginner: 90,
+  intermediate: 75,
+  advanced: 60,
+}
 
 export type Summary = {
   mode: 'xor'
@@ -29,7 +33,8 @@ type SimState = {
   isPaused: boolean
   justSolved: boolean
   lastSummary: Summary | null
-  lastGrade: Grade | null // ← se fija en solve() y se persiste en endRound()
+  lastGrade: Grade | null
+  runSeed: number | null
 
   start: (difficulty: Difficulty) => void
   decreaseTime: (dtSec: number) => void
@@ -67,6 +72,7 @@ export const useSimStore = create<SimState>((set, get) => ({
   justSolved: false,
   lastSummary: null,
   lastGrade: null,
+  runSeed: null,
 
   start: (difficulty) =>
     set(() => ({
@@ -79,6 +85,7 @@ export const useSimStore = create<SimState>((set, get) => ({
       justSolved: false,
       lastSummary: null,
       lastGrade: null,
+      runSeed: Date.now(), // nueva semilla en cada inicio/restart
     })),
 
   decreaseTime: (dtSec) =>
@@ -89,7 +96,6 @@ export const useSimStore = create<SimState>((set, get) => ({
     }),
 
   // multiplier: 1 (perfect) o 0.7 (partial)
-  // Nota: aplico el multiplicador a (base + timeBonus); el streakBonus se suma completo para premiar la racha.
   solve: (multiplier = 1, grade: Grade = 'perfect') =>
     set((s) => {
       if (!s.difficulty) return {}
@@ -149,6 +155,7 @@ export const useSimStore = create<SimState>((set, get) => ({
       lastSummary: null,
       lastGrade: null,
       streak: 0,
+      runSeed: null,
     })),
 
   togglePause: () => set((s) => ({ isPaused: !s.isPaused })),

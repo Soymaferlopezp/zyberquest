@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useSimStore, type Difficulty } from '@/store/simStore'
 import { generateXor } from '@/lib/simGenerators'
 import WhyTooltip from './WhyTooltip'
@@ -10,11 +10,16 @@ type Grid = number[][]
 
 export default function XORBoard() {
   const difficultyFromStore = useSimStore((s) => s.difficulty)
-  const difficulty: Difficulty = (difficultyFromStore ?? 'Beginner') as Difficulty
+  const runSeed = useSimStore((s) => s.runSeed)
+  const difficulty: Difficulty = (difficultyFromStore ?? 'beginner') as Difficulty
   const { solve, useHint } = useSimStore()
   const hintsLeft = useSimStore((s) => s.hintsLeft)
 
-  const puzzle = useMemo(() => generateXor(difficulty, 444), [difficulty])
+  const puzzle = useMemo(() => {
+    const seed = runSeed ?? 444
+    return generateXor(difficulty, seed)
+  }, [difficulty, runSeed])
+
   const { width: W, height: H } = puzzle
 
   // A (bloqueado) y B (editable)
@@ -23,15 +28,17 @@ export default function XORBoard() {
   const [solved, setSolved] = useState(false)
 
   // TAMAÑOS (compactos en Intermediate/Advanced)
-  const abCell = difficulty === 'Advanced' ? 10 : difficulty === 'Intermediate' ? 12 : 16
-  const abGap = difficulty === 'Advanced' ? 2 : difficulty === 'Intermediate' ? 3 : 4
-  const [resultCell, setResultCell] = useState<number>(difficulty === 'Advanced' ? 24 : difficulty === 'Intermediate' ? 26 : 28)
+  const abCell = difficulty === 'advanced' ? 10 : difficulty === 'intermediate' ? 12 : 16
+  const abGap = difficulty === 'advanced' ? 2 : difficulty === 'intermediate' ? 3 : 4
+  const [resultCell, setResultCell] = useState<number>(
+    difficulty === 'advanced' ? 24 : difficulty === 'intermediate' ? 26 : 28
+  )
   const resultGap = 4
 
   useEffect(() => {
     setB(Array.from({ length: H }, () => Array(W).fill(0)))
     setSolved(false)
-    setResultCell(difficulty === 'Advanced' ? 24 : difficulty === 'Intermediate' ? 26 : 28)
+    setResultCell(difficulty === 'advanced' ? 24 : difficulty === 'intermediate' ? 26 : 28)
   }, [puzzle.id, H, W, difficulty])
 
   // R = A XOR B
@@ -41,9 +48,7 @@ export default function XORBoard() {
     return out
   }, [A, B, H, W])
 
-  // ✅ Dos condiciones:
-  // lettersLit: TODAS las celdas target=1 están encendidas en R
-  // perfectClean: lettersLit Y todas las celdas target=0 están apagadas en R
+  // Condiciones de victoria
   const { lettersLit, perfectClean } = useMemo(() => {
     let lit = true
     let clean = true
@@ -60,7 +65,6 @@ export default function XORBoard() {
     return { lettersLit: lit, perfectClean: lit && clean }
   }, [R, puzzle.targetMask, H, W])
 
-  // Disparo de solve con factor (perfect=1, partial=0.7)
   useEffect(() => {
     if (!lettersLit) {
       if (solved) setSolved(false)
@@ -118,7 +122,7 @@ export default function XORBoard() {
           <button
             onClick={onHint}
             disabled={hintsLeft <= 0 || solved}
-            className="rounded-md bg-[var(--zx-magenta)] px-3 py-1.5 text-sm font-Intermediate text-black hover:ring-2 hover:ring-[var(--zx-yellow)] focus:outline-none focus:ring-2 focus:ring-[var(--zx-yellow)] disabled:opacity-40"
+            className="rounded-md bg-[var(--zx-magenta)] px-3 py-1.5 text-sm font-medium text-black hover:ring-2 hover:ring-[var(--zx-yellow)] focus:outline-none focus:ring-2 focus:ring-[var(--zx-yellow)] disabled:opacity-40"
             aria-disabled={hintsLeft <= 0 || solved}
             title="Reveal one correct row (costs 10 points)"
           >
@@ -139,7 +143,16 @@ export default function XORBoard() {
 
       {/* A y B arriba */}
       <section className="mt-4 grid gap-4 md:grid-cols-2">
-        <Panel title="Layer A (fixed)" help="Static layer" grid={A} readOnly cellSize={abCell} gap={abGap} variant="A" />
+        <Panel
+          title="Layer A (fixed)"
+          help="Static layer"
+          grid={A}
+          readOnly
+          cellSize={abCell}
+          gap={abGap}
+          variant="A"
+        />
+
         <Panel
           title="Layer B (editable)"
           help="Use mouse or keyboard (Space/Enter toggles, arrows move)."
@@ -155,7 +168,7 @@ export default function XORBoard() {
         {/* Result abajo + zoom */}
         <div className="md:col-span-2">
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm font-Intermediate text-[var(--zx-magenta)]">Result (A XOR B)</div>
+            <div className="text-sm font-medium text-[var(--zx-magenta)]">Result (A XOR B)</div>
             <label className="flex items-center gap-2 text-xs opacity-80">
               Zoom
               <input
@@ -193,7 +206,7 @@ export default function XORBoard() {
               ? perfectClean
                 ? 'Perfect Clean achieved.'
                 : 'Decrypted achieved (70%).'
-              : 'Yellow = letter cell; white = still pending.'}
+              : 'Yellow = letter cell lit; grey tones = background or pending cells.'}
           </div>
         </div>
       </section>
@@ -211,23 +224,9 @@ export default function XORBoard() {
   )
 }
 
-/* ================= Panel genérico ================= */
+/* ================= Panel genérico (memo) ================= */
 
-function Panel({
-  title,
-  help,
-  grid,
-  onToggle,
-  refs,
-  readOnly = false,
-  result = false,
-  target,
-  solved = false,
-  cellSize = 18,
-  onArrow,
-  gap = 6,
-  variant = 'B',
-}: {
+type PanelProps = {
   title: string
   help?: string
   grid: Grid
@@ -241,15 +240,34 @@ function Panel({
   onArrow?: (r: number, c: number, dr: number, dc: number) => void
   gap?: number
   variant?: 'A' | 'B' | 'R'
-}) {
+}
+
+const Panel = React.memo(function Panel({
+  title,
+  help,
+  grid,
+  onToggle,
+  refs,
+  readOnly = false,
+  result = false,
+  target,
+  solved = false,
+  cellSize = 18,
+  onArrow,
+  gap = 6,
+  variant = 'B',
+}: PanelProps) {
   const H = grid.length
   const W = grid[0]?.length ?? 0
 
-  const styleVars = { ['--cell' as any]: `${cellSize}px`, ['--gap' as any]: `${gap}px` } as React.CSSProperties
+  const styleVars = {
+    ['--cell' as any]: `${cellSize}px`,
+    ['--gap' as any]: `${gap}px`,
+  } as React.CSSProperties
 
   return (
     <div className="rounded-lg border border-white/10 bg-black/40 p-3" style={styleVars}>
-      {title && <div className="text-sm font-Intermediate text-[var(--zx-magenta)] mb-1">{title}</div>}
+      {title && <div className="text-sm font-medium text-[var(--zx-magenta)] mb-1">{title}</div>}
       {help && <div className="text-xs opacity-70 mb-2">{help}</div>}
       <div
         className="grid overflow-auto"
@@ -262,40 +280,44 @@ function Panel({
             const key = `${r}-${c}`
             const isOne = bit === 1
 
-            // A: no pinta, B: magenta si 1, R: letters-only en amarillo
+            // Colores por variante
             let styleClass = 'bg-transparent'
             if (variant === 'B' && !result) {
               styleClass = isOne ? 'bg-[var(--zx-magenta)]' : 'bg-transparent'
             }
+
+            // RESULT con fondo completo (no letters-only)
             if (variant === 'R' && result && target) {
               const shouldBeOne = target[r][c] === 1
-              // Mapeo visual:
-              // 1) Letra correcta encendida → AMARILLO
-              // 2) Letra pendiente (debería ser 1 y está 0) → gris fuerte (blanco/70)
-              // 3) Fondo correcto apagado (debería ser 0 y está 0) → gris suave (blanco/10)
-              // 4) Fondo encendido por error (debería ser 0 y está 1) → gris medio (blanco/40-70)
               if (shouldBeOne && isOne) {
-                styleClass = 'bg-[var(--zx-yellow)]'          // (1)
+                styleClass = 'bg-[var(--zx-yellow)]'     // letra correcta encendida
               } else if (shouldBeOne && !isOne) {
-                styleClass = 'bg-white/70'                    // (2) letra pendiente
+                styleClass = 'bg-white/70'               // letra pendiente
               } else if (!shouldBeOne && !isOne) {
-                styleClass = 'bg-white/10'                    // (3) fondo correcto
+                styleClass = 'bg-white/10'               // fondo correcto apagado
               } else {
-                styleClass = 'bg-white/40'                    // (4) extra encendido fuera de letra
+                styleClass = 'bg-white/40'               // fondo encendido por error
               }
             }
 
-            const isLetterCell = target ? target[r][c] === 1 : false
+            // Bordes: A muy sutil; R visible siempre para ver “cuadritos”
             const borderClass =
-              variant === 'A' ? 'border-white/5' :
-              variant === 'R' && !isLetterCell ? 'border-transparent' :
-              'border-white/10'
+              variant === 'A' ? 'border-white/5'
+              : variant === 'R' ? 'border-white/10'
+              : 'border-white/10'
 
-            const common = `rounded-sm border ${borderClass} focus:outline-none focus:ring-2 focus:ring-[var(--zx-yellow)]`
+            const common =
+              `rounded-sm border ${borderClass} focus:outline-none focus:ring-2 focus:ring-[var(--zx-yellow)]`
             const sizeClass = 'w-[var(--cell)] h-[var(--cell)]'
 
             if (readOnly) {
-              return <div key={key} className={`${sizeClass} ${common} ${styleClass}`} aria-label={`r${r+1} c${c+1} value ${bit}`} />
+              return (
+                <div
+                  key={key}
+                  className={`${sizeClass} ${common} ${styleClass}`}
+                  aria-label={`r${r + 1} c${c + 1} value ${bit}`}
+                />
+              )
             }
 
             return (
@@ -324,6 +346,12 @@ function Panel({
           })
         )}
       </div>
+
+      {result && (
+        <div className="mt-2 text-xs opacity-70">
+          {solved ? 'Pattern revealed!' : 'Make this match the target.'}
+        </div>
+      )}
     </div>
   )
-}
+})

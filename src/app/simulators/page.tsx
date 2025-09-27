@@ -10,27 +10,51 @@ import { useRouter } from 'next/navigation'
 import { motion, useReducedMotion } from 'framer-motion'
 
 export default function SimulatorsPage() {
-  const { difficulty, isPaused, timeLeft, justSolved, decreaseTime, endRound, togglePause, start } = useSimStore()
+  const {
+    difficulty,
+    isPaused,
+    timeLeft,
+    justSolved,
+    decreaseTime,
+    endRound,
+    togglePause,
+    start,
+    reset,
+  } = useSimStore()
+
   const router = useRouter()
   const reduceMotion = useReducedMotion()
   const rafRef = useRef<number | null>(null)
   const lastTsRef = useRef<number | null>(null)
-  const [localDiff, setLocalDiff] = useState<'Beginner'|'Intermediate'|'Advanced'>('Beginner')
+  const [localDiff, setLocalDiff] =
+    useState<'beginner' | 'intermediate' | 'advanced'>('beginner')
 
   const fadeSlide = {
     hidden: { opacity: 0, y: reduceMotion ? 0 : 16 },
     show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
   }
 
+  const restartCurrent = () => {
+    if (!difficulty) return
+    lastTsRef.current = null // resetea acumulador del timer
+    start(difficulty)        // nueva runSeed, tiempo completo, unpausa
+  }
+  const goToMenu = () => {
+    reset()
+    router.push('/simulators')
+  }
+
   // Teclas globales
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() === 'p') togglePause()
-      if (e.key === 'Escape') router.push('/menu')
+      const k = e.key.toLowerCase()
+      if (k === 'p') togglePause()
+      if (k === 'r' && difficulty) restartCurrent()
+      if (e.key === 'Escape') router.push('/simulators')
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [router, togglePause])
+  }, [router, togglePause, difficulty])
 
   // Timer (solo cuando hay partida)
   useEffect(() => {
@@ -59,7 +83,7 @@ export default function SimulatorsPage() {
 
   return (
     <main className="relative min-h-[100dvh] text-white overflow-hidden bg-[var(--zx-ink)]">
-      {/* code-rain sutil + scanline visibles solo en la intro */}
+      {/* code-rain sutil + scanline en intro */}
       {!difficulty && (
         <>
           <div className="pointer-events-none absolute inset-0 opacity-[0.08] [mask-image:linear-gradient(to_bottom,transparent,black,transparent)]">
@@ -79,11 +103,9 @@ export default function SimulatorsPage() {
             Simulators — Play as a Hacker
           </motion.h1>
 
-          {/* Grid: columna izquierda (card + explicación XOR), derecha imagen */}
           <div className="grid items-start gap-10 md:grid-cols-2 mt-10">
-            {/* Columna izquierda apilada */}
+            {/* Columna izquierda: card principal + qué es XOR */}
             <div className="flex flex-col gap-8">
-              {/* Card principal */}
               <motion.div initial="hidden" animate="show" variants={fadeSlide}>
                 <div
                   className="rounded-2xl border p-6 md:p-7"
@@ -98,13 +120,14 @@ export default function SimulatorsPage() {
                     <span className="font-mono">A XOR B</span> reveals the hidden pattern.
                     <br className="hidden md:block" />
                     <span className="text-sm md:text-base opacity-90">
-                      Scoring — <b>Perfect Clean</b>: letters lit + background cleared (100%). <b>Decrypted</b>: letters lit only (70%).
+                      Scoring — <b>Perfect Clean</b>: letters lit + background cleared (100%).{' '}
+                      <b>Decrypted</b>: letters lit only (70%).
                     </span>
                   </p>
 
-                  {/* Dificultad en una línea */}
+                  {/* Dificultad */}
                   <div className="mt-5 flex flex-wrap items-center gap-2">
-                    {(['Beginner','Intermediate','Advanced'] as const).map((d) => (
+                    {(['beginner','intermediate','advanced'] as const).map((d) => (
                       <button
                         key={d}
                         onClick={() => setLocalDiff(d)}
@@ -116,35 +139,45 @@ export default function SimulatorsPage() {
                         ].join(' ')}
                         aria-pressed={localDiff === d}
                       >
-                        {d[0].toUpperCase() + d.slice(1)}
+                        {d === 'beginner' ? 'Beginner' : d === 'intermediate' ? 'Intermediate' : 'Advanced'}
                       </button>
                     ))}
                   </div>
 
-                  {/* Botón Start */}
-                  <div className="mt-5">
+                  {/* Start + Back to Main Menu */}
+                  <div className="mt-5 flex items-center gap-3">
                     <button
                       onClick={() => start(localDiff)}
                       className="inline-flex items-center justify-center rounded-lg border px-6 py-3 font-semibold text-white border-[var(--zx-magenta)] hover:bg-[var(--zx-yellow)] hover:text-black focus:outline-none focus:ring-2 focus:ring-[var(--zx-yellow)]"
+                      title="Enter to start"
                     >
-                      Start • {localDiff}
+                      Start • {localDiff === 'beginner' ? 'Beginner' : localDiff === 'intermediate' ? 'Intermediate' : 'Advanced'}
+                    </button>
+
+                    {/* NUEVO: volver al menú general de juegos */}
+                    <button
+                      onClick={() => router.push('/menu')}
+                      className="inline-flex items-center justify-center rounded-lg border border-white/20 px-4 py-3 text-sm hover:border-[var(--zx-yellow)] focus:outline-none focus:ring-2 focus:ring-[var(--zx-yellow)]"
+                      title="Go to games menu"
+                    >
+                      Back to Main Menu
                     </button>
                   </div>
 
                   {/* Shortcuts */}
                   <div className="mt-5 rounded-lg border border-white/15 bg-black/30 p-3">
-                    <div className="text-xs text-[var(--zx-yellow)] font-Intermediate mb-1">Controls</div>
+                    <div className="text-xs text-[var(--zx-yellow)] font-medium mb-1">Controls</div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-1 text-xs md:text-sm">
                       <div>1) Keyboard &amp; mouse.</div>
-                      <div>2) P Pause</div>
-                      <div>3) Esc Back</div>
-                      <div>4) Enter Start</div>
+                      <div>2) P Pause / Resume</div>
+                      <div>3) R Restart</div>
+                      <div>4) Esc Back to Menu</div>
                     </div>
                   </div>
                 </div>
               </motion.div>
 
-              {/* Explicación XOR justo debajo del card */}
+              {/* ¿Qué es XOR? */}
               <motion.div initial="hidden" animate="show" variants={fadeSlide}>
                 <div
                   className="rounded-2xl border p-6 md:p-7"
@@ -159,15 +192,15 @@ export default function SimulatorsPage() {
                     In this simulator, you toggle <span className="font-mono">B</span> so that <span className="font-mono">A XOR B</span> matches a target mask (letters).
                   </p>
                   <ul className="mt-3 text-sm list-disc pl-5 space-y-1 opacity-90">
-                    <li><b>Rows/columns strategy:</b> fix full rows to lock parts of the pattern.</li>
+                    <li><b>Rows/columns strategy:</b> lock full rows to reduce search space.</li>
                     <li><b>Even vs odd flips:</b> flipping twice cancels; once reveals.</li>
-                    <li><b>Hints:</b> reveal a correct row (costs points).</li>
+                    <li><b>Hints:</b> reveal a correct row (–10 points).</li>
                   </ul>
                 </div>
               </motion.div>
             </div>
 
-            {/* Columna derecha: imagen */}
+            {/* Imagen */}
             <motion.div
               initial={{ opacity: 0, x: 24 }}
               animate={{ opacity: 1, x: 0, transition: { duration: 0.7, ease: 'easeOut' } }}
@@ -199,18 +232,38 @@ export default function SimulatorsPage() {
         <section className="relative z-10 mx-auto max-w-6xl px-6 py-8">
           <HUD />
 
-          {/* Overlay pausa */}
+          {/* Overlay de pausa con 3 opciones */}
           {isPaused && (
-            <div className="fixed inset-0 z-40 grid place-items-center bg-black/70 backdrop-blur-sm">
-              <div className="rounded-xl border border-white/10 bg-black/60 p-6 text-center">
-                <div className="text-xl mb-2">Paused</div>
-                <p className="opacity-80 mb-4">Press <kbd className="border px-1">P</kbd> to resume.</p>
-                <button
-                  onClick={togglePause}
-                  className="rounded-md bg-[var(--zx-magenta)] px-4 py-2 font-Intermediate text-black hover:ring-2 hover:ring-[var(--zx-yellow)] focus:outline-none focus:ring-2 focus:ring-[var(--zx-yellow)]"
-                >
-                  Resume
-                </button>
+            <div className="fixed inset-0 z-40 grid place-items-center bg-black/75 backdrop-blur-sm">
+              <div className="w-[min(520px,92vw)] rounded-2xl border border-white/10 bg-black/80 p-6 text-center">
+                <div className="text-xl font-semibold text-[var(--zx-magenta)] mb-2">Paused</div>
+                <p className="opacity-80 mb-4 text-sm">
+                  Use <kbd className="border px-1">P</kbd> to resume, <kbd className="border px-1">R</kbd> to restart,
+                  or <kbd className="border px-1">Esc</kbd> to go back to menu.
+                </p>
+                <div className="flex flex-wrap justify-center gap-3">
+                  <button
+                    onClick={togglePause}
+                    className="rounded-md bg-[var(--zx-magenta)] px-4 py-2 font-medium text-black hover:ring-2 hover:ring-[var(--zx-yellow)] focus:outline-none focus:ring-2 focus:ring-[var(--zx-yellow)]"
+                    title="P"
+                  >
+                    Resume (P)
+                  </button>
+                  <button
+                    onClick={restartCurrent}
+                    className="rounded-md border border-white/20 px-4 py-2 hover:border-[var(--zx-yellow)] focus:outline-none focus:ring-2 focus:ring-[var(--zx-yellow)]"
+                    title="R"
+                  >
+                    Restart (R)
+                  </button>
+                  <button
+                    onClick={goToMenu}
+                    className="rounded-md border border-white/20 px-4 py-2 hover:border-[var(--zx-yellow)] focus:outline-none focus:ring-2 focus:ring-[var(--zx-yellow)]"
+                    title="Esc"
+                  >
+                    Go to Menu
+                  </button>
+                </div>
               </div>
             </div>
           )}

@@ -1,7 +1,11 @@
 // lib/simSchemas.ts
 import { z } from 'zod'
 
-export const difficultySchema = z.union([z.literal('Beginner'), z.literal('Intermediate'), z.literal('Advanced')])
+export const difficultySchema = z.union([
+  z.literal('beginner'),
+  z.literal('intermediate'),
+  z.literal('advanced'),
+])
 export type Difficulty = z.infer<typeof difficultySchema>
 
 export const xorSchema = z.object({

@@ -1,7 +1,6 @@
 // lib/simGenerators.ts
 import { xorSchema, type XorPuzzle, type Difficulty } from './simSchemas'
 
-/* =============== Utils =============== */
 export function makeRng(seed = 123456): () => number {
   let s = seed >>> 0
   return () => {
@@ -12,7 +11,7 @@ export function makeRng(seed = 123456): () => number {
   }
 }
 
-type Glyph = number[][] // 5x5
+type Glyph = number[][]
 const GLYPHS: Record<string, Glyph> = {
   Z: [[1,1,1,1,1],[0,0,0,1,0],[0,0,1,0,0],[0,1,0,0,0],[1,1,1,1,1]],
   C: [[1,1,1,1,1],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,1,1,1,1]],
@@ -50,32 +49,33 @@ function padMask(mask: number[][], width: number, height: number, rng: () => num
       if (R >= 0 && R < height && C >= 0 && C < width) out[R][C] = mask[r][c]
     }
   }
-  // ruido leve opcional
-  const spr = Math.floor(width * height * 0.02)
-  for (let k = 0; k < spr; k++) out[Math.floor(rng() * height)][Math.floor(rng() * width)] |= 0
+  // ligero ruido opcional
   return out
 }
 
 const XOR_SIZE: Record<Difficulty, { w: number; h: number }> = {
-  Beginner:   { w: 16, h: 8 },
-  Intermediate: { w: 24, h: 12 },
-  Advanced:   { w: 32, h: 16 },
+  beginner:     { w: 16, h: 8 },
+  intermediate: { w: 24, h: 12 },
+  advanced:     { w: 32, h: 16 },
 }
-const XOR_TIME: Record<Difficulty, number> = { Beginner: 90, Intermediate: 75, Advanced: 60 }
+const XOR_TIME: Record<Difficulty, number> = {
+  beginner: 90, intermediate: 75, advanced: 60,
+}
 
 export function generateXor(difficulty: Difficulty, seed = 20250926): XorPuzzle {
   const rng = makeRng(seed)
   const { w, h } = XOR_SIZE[difficulty]
 
   // Beginner → ZC, Intermediate → ZEC, Advanced → ZCASH
-  const requested = difficulty === 'Beginner' ? 'ZC' : difficulty === 'Intermediate' ? 'ZEC' : 'ZCASH'
-  const fallback = ['ZCASH', 'ZEC', 'ZC', 'Z'].find((wrd) => wordWidth(wrd, 1) <= w) ?? 'Z'
-  const word = wordWidth(requested, 1) <= w ? requested : fallback
+  const requested = difficulty === 'beginner' ? 'ZC' :
+                    difficulty === 'intermediate' ? 'ZEC' : 'ZCASH'
+  const fallback = ['ZCASH','ZEC','ZC','Z'].find((wrd) => wordWidth(wrd,1) <= w) ?? 'Z'
+  const word = wordWidth(requested,1) <= w ? requested : fallback
 
   const base = renderWord(word, 1)
   const targetMask = padMask(base, w, h, rng)
 
-  const layerA = Array.from({ length: h }, () => Array.from({ length: w }, () => (rng() < 0.5 ? 0 : 1)))
+  const layerA = Array.from({ length: h }, () => Array.from({ length: w }, () => (Math.random() < 0.5 ? 0 : 1)))
   const layerB = Array.from({ length: h }, () => Array(w).fill(0))
 
   const puzzle: XorPuzzle = {
@@ -90,14 +90,14 @@ export function generateXor(difficulty: Difficulty, seed = 20250926): XorPuzzle 
     targetMessage: word,
     timeLimit: XOR_TIME[difficulty],
     hint:
-      difficulty === 'Beginner'
-        ? 'Try locking full rows/columns; XOR flips bits — even count cancels, odd count reveals.'
+      difficulty === 'beginner'
+        ? 'Try locking full rows/columns; XOR flips bits — even count cancels.'
         : 'Focus on columns forming letters; block-correct parts to reduce search space.',
   }
   return xorSchema.parse(puzzle)
 }
 
-// Demos opcionales
-export const demoXorBeginner = () => generateXor('Beginner', 444)
-export const demoXorMed = () => generateXor('Intermediate', 555)
-export const demoXorAdvanced = () => generateXor('Advanced', 666)
+// Demos
+export const demoXorBeginner = () => generateXor('beginner', 444)
+export const demoXorIntermediate = () => generateXor('intermediate', 555)
+export const demoXorAdvanced = () => generateXor('advanced', 666)
