@@ -8,7 +8,6 @@ export default function ControlsBar() {
         <li><kbd className="px-2 py-1 rounded border border-white/20">1-4</kbd> Select option</li>
         <li><kbd className="px-2 py-1 rounded border border-white/20">Enter</kbd> Confirm</li>
         <li><kbd className="px-2 py-1 rounded border border-white/20">P</kbd> Pause</li>
-        <li><kbd className="px-2 py-1 rounded border border-white/20">Esc</kbd> Exit</li>
       </ul>
     </nav>
   );

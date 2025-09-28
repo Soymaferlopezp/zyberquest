@@ -20,31 +20,22 @@ function shuffleChoices(q: TriviaQuestion): Pick<TriviaQuestion, "choices" | "an
   return { choices, answerIndex };
 }
 
-/** Acepta ambas notaciones y normaliza a las etiquetas del JSON */
-type DifficultyArg =
-  
-  | "Beginner" | "Intermediate" | "Advanced";
+type StoreDifficulty = "beginner" | "intermediate" | "advanced";
+type JsonLabel = "Beginner" | "Intermediate" | "Advanced";
 
-function normalizeToLabel(d: DifficultyArg | string): "Beginner" | "Intermediate" | "Advanced" | null {
-  const s = String(d).toLowerCase();
-  if (s === "easy" || s === "beginner") return "Beginner";
-  if (s === "medium" || s === "intermediate") return "Intermediate";
-  if (s === "hard" || s === "advanced") return "Advanced";
-  return null;
+function toJsonLabel(d: StoreDifficulty): JsonLabel {
+  if (d === "beginner") return "Beginner";
+  if (d === "intermediate") return "Intermediate";
+  return "Advanced";
 }
 
 type PrepareOpts = {
   count: number;                 // normalmente 10
-  difficulty: DifficultyArg;     // venga como venga, lo normalizamos
+  difficulty: StoreDifficulty;   // del store (minúsculas)
 };
 
-/**
- * Devuelve preguntas EXCLUSIVAMENTE de la modalidad pedida (por etiqueta del JSON),
- * sin duplicar. Si hay exactamente 10, devuelve esas 10 barajadas; si hay >10, toma 10 únicas.
- * Siempre baraja las choices y recalcula answerIndex por pregunta.
- */
 export function prepareTrivia({ count, difficulty }: PrepareOpts): TriviaQuestion[] {
-  // 1) Parse y tipado del JSON
+  // 1) Parse JSON
   const parsed = triviaArraySchema.safeParse(triviaData);
   if (!parsed.success) {
     console.error("[triviaLoader] Invalid trivia JSON:", parsed.error.flatten());
@@ -52,31 +43,25 @@ export function prepareTrivia({ count, difficulty }: PrepareOpts): TriviaQuestio
   }
   const all = parsed.data as TriviaQuestion[];
 
-  // 2) Normalizar la dificultad a la etiqueta del JSON
-  const label = normalizeToLabel(difficulty);
-  if (!label) {
-    console.error(`[triviaLoader] Dificultad desconocida: "${difficulty}"`);
-    return [];
-  }
-
-  // 3) Filtrar SOLO por esa modalidad
+  // 2) Filtrar por etiqueta del JSON
+  const label = toJsonLabel(difficulty);
   const pool = all.filter(q => q.difficulty === label);
   if (pool.length === 0) {
-    console.warn(`[triviaLoader] No hay preguntas para la dificultad "${label}".`);
+    console.warn(`[triviaLoader] No questions for difficulty "${label}".`);
     return [];
   }
 
-  // 4) Selección sin duplicados
+  // 3) Selección sin duplicados
   const poolShuffled = shuffle(pool);
   const take = Math.min(count, poolShuffled.length);
   const selected = poolShuffled.slice(0, take);
 
-  // 5) Barajar choices y recalcular índice
+  // 4) Barajar choices y recalcular índice
   const withShuffledChoices = selected.map((q) => {
     const { choices, answerIndex } = shuffleChoices(q);
     return { ...q, choices, answerIndex } as TriviaQuestion;
   });
 
-  // 6) Barajar orden final de preguntas
+  // 5) Barajar orden final
   return shuffle(withShuffledChoices);
 }

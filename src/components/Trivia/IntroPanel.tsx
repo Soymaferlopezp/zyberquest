@@ -4,38 +4,24 @@ import { useRouter } from "next/navigation";
 import { useTriviaStore } from "@/store";
 import { useEffect, useRef, useState } from "react";
 
-/**
- * Intro: elegir dificultad y luego presionar "Start".
- * - Hotkeys: 1/2/3 para seleccionar Beginner/Intermediate/Advanced
- * - Enter para iniciar
- * - Esc para volver al menú de juegos (/menu)
- */
+/** Intro: elegir dificultad y luego presionar "Start"*/
 export default function IntroPanel() {
   const router = useRouter();
   const { setDifficulty, startGame, resetToIntro } = useTriviaStore();
 
-  // dificultad pendiente (local) antes de iniciar
-  type Diff = "easy" | "medium" | "hard";
-  const [pendingDiff, setPendingDiff] = useState<Diff>("easy");
+  type Diff = "beginner" | "intermediate" | "advanced";
+  const [pendingDiff, setPendingDiff] = useState<Diff>("beginner");
 
   const panelRef = useRef<HTMLElement | null>(null);
-  useEffect(() => {
-    panelRef.current?.focus();
-  }, []);
+  useEffect(() => { panelRef.current?.focus(); }, []);
 
-  // Hotkeys globales de la intro
+  // Hotkeys de la intro (sin Esc)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase();
-      if (key === "escape" || e.key === "Esc") {
-        e.preventDefault();
-        resetToIntro();
-        router.push("/menu");
-        return;
-      }
-      if (key === "1") { e.preventDefault(); setPendingDiff("easy"); return; }
-      if (key === "2") { e.preventDefault(); setPendingDiff("medium"); return; }
-      if (key === "3") { e.preventDefault(); setPendingDiff("hard"); return; }
+      if (key === "1") { e.preventDefault(); setPendingDiff("beginner"); return; }
+      if (key === "2") { e.preventDefault(); setPendingDiff("intermediate"); return; }
+      if (key === "3") { e.preventDefault(); setPendingDiff("advanced"); return; }
       if (key === "enter") {
         e.preventDefault();
         setDifficulty(pendingDiff as any);
@@ -45,17 +31,14 @@ export default function IntroPanel() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [pendingDiff, setDifficulty, startGame, resetToIntro, router]);
+  }, [pendingDiff, setDifficulty, startGame]);
 
   const handleStart = () => {
     setDifficulty(pendingDiff as any);
     startGame();
   };
 
-  // estilo helper
-  const isSelected = (d: Diff) => pendingDiff === d;
-  const baseBtn =
-    "rounded-xl border p-4 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-[#F9C400]/60";
+  const baseBtn = "rounded-xl border p-4 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-[#F9C400]/60";
   const selectedStyles = {
     borderColor: "#F9C400",
     boxShadow: "0 0 0 1px #F9C400, 0 0 24px rgba(249,196,0,0.18)",
@@ -69,11 +52,16 @@ export default function IntroPanel() {
       className="rounded-2xl border bg-black/60 backdrop-blur p-5 md:p-6 relative outline-none"
       style={{ borderColor: "#F9C400" }}
     >
-      {/* Hint Esc */}
+      {/* Back to games menu*/}
       <div className="mb-4 flex items-center justify-end">
-        <span className="text-xs opacity-70" aria-label="Press Esc to go back to the games menu">
-          Press <kbd className="border border-white/20 px-1 py-0.5 rounded">Esc</kbd> to go back
-        </span>
+        <button
+          type="button"
+          onClick={() => { resetToIntro(); router.push("/menu"); }}
+          className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-1.5 text-sm hover:bg-white/10"
+          aria-label="Back to games menu"
+        >
+          ← Back to Games
+        </button>
       </div>
 
       <header className="mb-4">
@@ -96,10 +84,10 @@ export default function IntroPanel() {
       <div className="grid sm:grid-cols-3 gap-3">
         <button
           type="button"
-          aria-pressed={isSelected("easy")}
-          onClick={() => setPendingDiff("easy")}
+          aria-pressed={pendingDiff === "beginner"}
+          onClick={() => setPendingDiff("beginner")}
           className={`${baseBtn} border-white/15 hover:bg-white/10`}
-          style={isSelected("easy") ? selectedStyles : undefined}
+          style={pendingDiff === "beginner" ? selectedStyles : undefined}
         >
           <div className="text-base font-medium">Beginner</div>
           <div className="text-xs opacity-70">Basic concepts</div>
@@ -108,10 +96,10 @@ export default function IntroPanel() {
 
         <button
           type="button"
-          aria-pressed={isSelected("medium")}
-          onClick={() => setPendingDiff("medium")}
+          aria-pressed={pendingDiff === "intermediate"}
+          onClick={() => setPendingDiff("intermediate")}
           className={`${baseBtn} border-white/15 hover:bg-white/10`}
-          style={isSelected("medium") ? selectedStyles : undefined}
+          style={pendingDiff === "intermediate" ? selectedStyles : undefined}
         >
           <div className="text-base font-medium">Intermediate</div>
           <div className="text-xs opacity-70">Privacy and memos</div>
@@ -120,10 +108,10 @@ export default function IntroPanel() {
 
         <button
           type="button"
-          aria-pressed={isSelected("hard")}
-          onClick={() => setPendingDiff("hard")}
+          aria-pressed={pendingDiff === "advanced"}
+          onClick={() => setPendingDiff("advanced")}
           className={`${baseBtn} border-white/15 hover:bg-white/10`}
-          style={isSelected("hard") ? selectedStyles : undefined}
+          style={pendingDiff === "advanced" ? selectedStyles : undefined}
         >
           <div className="text-base font-medium">Advanced</div>
           <div className="text-xs opacity-70">Technical challenges and culture</div>
@@ -138,7 +126,7 @@ export default function IntroPanel() {
           onClick={handleStart}
           className="rounded-xl px-5 py-2 border text-black"
           style={{ background: "#F9C400", borderColor: "#F9C400" }}
-          aria-label={`Start ${pendingDiff === "easy" ? "Beginner" : pendingDiff === "medium" ? "Intermediate" : "Advanced"}`}
+          aria-label={`Start ${pendingDiff}`}
         >
           Start
         </button>

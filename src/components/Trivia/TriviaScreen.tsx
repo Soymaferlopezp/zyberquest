@@ -21,7 +21,7 @@ export default function TriviaScreen() {
 
   const reduce = useReducedMotion();
 
-  // rAF timer — reinicia referencia cada vez que cambian estado o maxTime
+  // rAF timer
   const rafRef = useRef<number | null>(null);
   const lastRef = useRef<number | null>(null);
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function TriviaScreen() {
     const canRun = status === "playing" && answerState === "idle";
     if (canRun) {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      lastRef.current = null; // reset start time para nuevo nivel/pregunta
+      lastRef.current = null;
       rafRef.current = requestAnimationFrame(loop);
     } else {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -51,7 +51,7 @@ export default function TriviaScreen() {
     };
   }, [status, answerState, perQuestionTime, tick]);
 
-  // Hotkeys globales
+  // Hotkeys (sin Esc)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const el = e.target as HTMLElement;
@@ -64,19 +64,9 @@ export default function TriviaScreen() {
       }
 
       if (status === "paused") {
-        // Resume
         if (e.key.toLowerCase() === "p" || e.key === "Enter") { e.preventDefault(); resume(); return; }
-        // Restart (Restaurar)
         if (e.key.toLowerCase() === "r") { e.preventDefault(); startGame(); return; }
-        // Menu
         if (e.key.toLowerCase() === "m") { e.preventDefault(); resetToIntro(); router.push("/trivias"); return; }
-      }
-
-      // ESC → volver a menú de Trivias y reiniciar
-      if (e.key === "Escape") {
-        e.preventDefault();
-        resetToIntro();
-        router.push("/trivias");
       }
     };
     window.addEventListener("keydown", onKey);
@@ -144,15 +134,15 @@ export default function TriviaScreen() {
             />
 
             {q ? (
-            <QuestionCard
-              question={q.question}
-              choices={q.choices}
-              selectedIndex={selectedIndex}
-              state={answerState === "idle" ? "idle" : (answerState as "correct" | "incorrect" | "idle")}
-              correctIndex={q.answerIndex}
-              explain={q.explain}        
-              showWhy={true}             
-            />
+              <QuestionCard
+                question={q.question}
+                choices={q.choices}
+                selectedIndex={selectedIndex}
+                state={answerState === "idle" ? "idle" : (answerState as "correct" | "incorrect" | "idle")}
+                correctIndex={q.answerIndex}
+                explain={q.explain}
+                showWhy={true}
+              />
             ) : (
               <section className="rounded-2xl border border-white/10 p-6 bg-white/5 backdrop-blur">
                 <p className="opacity-70">Loading…</p>
@@ -165,28 +155,34 @@ export default function TriviaScreen() {
           </div>
         )}
 
-        {/* Overlay de PAUSA */}
+        {/* Pausa (sin mención a Esc) */}
         {status === "paused" && (
           <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4">
-            <div className="w-full max-w-md rounded-2xl border border-white/10 bg-black/90 p-6 text-white">
+            <div
+              className="w-full max-w-md rounded-2xl border bg-black/90 p-6 text-white"
+              style={{ borderColor: "#F9C400", boxShadow: "0 0 24px rgba(249,196,0,0.25)" }}
+            >
               <h3 className="text-lg font-semibold mb-4">Paused</h3>
               <div className="grid gap-3">
                 <button
-                  className="rounded-lg px-4 py-2 border border-white/15 hover:bg-white/10 text-left"
+                  className="rounded-lg px-4 py-2 border hover:bg-white/10 text-left"
+                  style={{ borderColor: "#F9C400" }}
                   onClick={resume}
                 >
                   <span className="font-medium">Resume</span> <span className="opacity-70">• P</span>
                 </button>
 
                 <button
-                  className="rounded-lg px-4 py-2 border border-[rgba(249,196,0,0.6)] hover:bg-white/10 text-left"
+                  className="rounded-lg px-4 py-2 border hover:bg-white/10 text-left"
+                  style={{ borderColor: "#F9C400" }}
                   onClick={startGame}
                 >
                   <span className="font-medium">Restart</span> <span className="opacity-70">• R</span>
                 </button>
 
                 <button
-                  className="rounded-lg px-4 py-2 border border-white/15 hover:bg-white/10 text-left"
+                  className="rounded-lg px-4 py-2 border hover:bg-white/10 text-left"
+                  style={{ borderColor: "#F9C400" }}
                   onClick={() => { resetToIntro(); router.push("/trivias"); }}
                 >
                   <span className="font-medium">Back to menu</span> <span className="opacity-70">• M</span>
@@ -194,7 +190,7 @@ export default function TriviaScreen() {
               </div>
 
               <p className="text-xs opacity-70 mt-4">
-                Shortcuts: <span className="font-mono">P</span> Resume • <span className="font-mono">R</span> Restart • <span className="font-mono">M</span> Menu • <span className="font-mono">Esc</span> Menu
+                Shortcuts: <span className="font-mono">P</span> Resume • <span className="font-mono">R</span> Restart • <span className="font-mono">M</span> Menu
               </p>
             </div>
           </div>

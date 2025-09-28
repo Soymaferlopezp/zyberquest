@@ -5,28 +5,22 @@ import { useTriviaStore } from "@/store";
 
 type SummaryModalProps = { open: boolean };
 
-// Etiquetas públicas
 const LABEL_BY_DIFF = {
-  easy: "Beginner",
-  medium: "Intermediate",
-  hard: "Advanced",
-} as const;
-
-// Etiqueta del siguiente nivel (o null si ya es el último)
-const NEXT_LABEL_BY_DIFF = {
-  easy: "Intermediate",
-  medium: "Advanced",
-  hard: null,
+  beginner: "Beginner",
+  intermediate: "Intermediate",
+  advanced: "Advanced",
 } as const;
 
 const NEXT_BY_DIFF = {
-  easy: "medium",
-  medium: "hard",
-  hard: null,
+  beginner: "intermediate",
+  intermediate: "advanced",
+  advanced: null,
 } as const;
 
-function normalize(d: unknown): keyof typeof LABEL_BY_DIFF {
-  return d === "easy" || d === "medium" || d === "hard" ? d : "easy";
+type Diff = keyof typeof LABEL_BY_DIFF;
+
+function normalize(d: unknown): Diff {
+  return (d === "beginner" || d === "intermediate" || d === "advanced") ? d : "beginner";
 }
 
 export default function SummaryModal({ open }: SummaryModalProps) {
@@ -45,33 +39,20 @@ export default function SummaryModal({ open }: SummaryModalProps) {
   const stats = getSummary();
   const diff = normalize(difficulty);
   const label = LABEL_BY_DIFF[diff];
-  const nextLabel = NEXT_LABEL_BY_DIFF[diff];
-  const nextDiff = NEXT_BY_DIFF[diff]; // "medium" | "hard" | null
+  const nextDiff = NEXT_BY_DIFF[diff];
 
   const handleContinueNext = () => {
     if (!nextDiff) return;
-    // 1) nueva dificultad…
-    setDifficulty(nextDiff);
-    // 2) …micro-tick siguiente 
-    queueMicrotask(() => {
-      startGame();
-      // Al pasar a status "playing", TriviaScreen desmonta este modal automáticamente (open=false).
-    });
-  };
-
-  const handleRestart = () => {
-    // Reinicia con la dificultad actual
-    startGame();
-  };
-
-  const handleExit = () => {
-    resetToIntro();
-    router.push("/trivias");
+    setDifficulty(nextDiff as any);
+    queueMicrotask(() => startGame());
   };
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4">
-      <div className="w-full max-w-md rounded-2xl border border-white/10 bg-black p-6 text-white">
+      <div
+        className="w-full max-w-md rounded-2xl border bg-black p-6 text-white"
+        style={{ borderColor: "#F9C400", boxShadow: "0 0 24px rgba(249,196,0,0.25)" }}
+      >
         <h3 className="text-lg font-semibold mb-2">Summary</h3>
 
         <div className="mb-1 text-xs opacity-80">
@@ -89,26 +70,28 @@ export default function SummaryModal({ open }: SummaryModalProps) {
         </ul>
 
         <div className="flex flex-wrap gap-3">
-          {nextLabel ? (
+          {nextDiff ? (
             <button
-              className="rounded-lg px-4 py-2 border border-[rgba(249,196,0,0.9)] text-black"
-              style={{ background: "#F9C400" }}
+              className="rounded-lg px-4 py-2 border text-black"
+              style={{ background: "#F9C400", borderColor: "#F9C400" }}
               onClick={handleContinueNext}
             >
-              Continue to {nextLabel}
+              Continue to {LABEL_BY_DIFF[nextDiff as Diff]}
             </button>
           ) : (
             <button
-              className="rounded-lg px-4 py-2 border border-white/15 hover:bg-white/10"
-              onClick={handleRestart}
+              className="rounded-lg px-4 py-2 border hover:bg-white/10"
+              style={{ borderColor: "#F9C400" }}
+              onClick={() => startGame()}
             >
               Play again
             </button>
           )}
 
           <button
-            className="rounded-lg px-4 py-2 border border-white/15 hover:bg-white/10"
-            onClick={handleExit}
+            className="rounded-lg px-4 py-2 border hover:bg-white/10"
+            style={{ borderColor: "#F9C400" }}
+            onClick={() => { resetToIntro(); router.push("/trivias"); }}
           >
             Back to menu
           </button>
