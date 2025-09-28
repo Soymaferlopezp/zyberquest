@@ -1,100 +1,156 @@
 "use client";
 
-import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { useTriviaStore } from "@/store";
+import { motion, useReducedMotion } from "framer-motion";
+import { useMemo } from "react";
 import ExplanationTooltip from "./ExplanationTooltip";
 
 type QuestionCardProps = {
   question: string;
   choices: string[];
   selectedIndex: number | null;
-  state: "idle" | "confirmed" | "correct" | "incorrect";
+  state: "idle" | "correct" | "incorrect";
+  correctIndex: number;
+  explain?: string;        // 👈 NUEVO: texto educativo
+  showWhy?: boolean;       // 👈 NUEVO: controlar visibilidad del tooltip
+};
+
+const COLORS = {
+  green: "#00FF9C",   // correcto
+  cyan: "#00E5FF",
+  magenta: "#FF3DBE", // incorrecto elegido
+  yellow: "#F9C400",  // selección/énfasis
+  white15: "rgba(255,255,255,0.15)",
 };
 
 export default function QuestionCard({
-  question, choices, selectedIndex, state,
+  question,
+  choices,
+  selectedIndex,
+  state,
+  correctIndex,
+  explain,
+  showWhy = true,
 }: QuestionCardProps) {
-  const shouldReduce = useReducedMotion();
-  const { questions, index, selectChoice, confirm, next } = useTriviaStore();
-  const q = questions[index];
-  const correctIndex = q?.answerIndex ?? -1;
+  const reduce = useReducedMotion();
+  const { selectChoice, confirm, answerState } = useTriviaStore();
 
-  const cardVariants: Variants | undefined = shouldReduce
-    ? undefined
-    : { initial: { y: 8, opacity: 0 }, animate: { y: 0, opacity: 1, transition: { duration: 0.22, ease: "easeOut" } } };
+  // Contenedor de la tarjeta con borde VERDE
+  const cardBorderStyle = useMemo(
+    () => ({
+      borderColor: COLORS.green,
+      boxShadow: "0 0 16px rgba(0,255,156,0.18)",
+    }),
+    []
+  );
 
-  const containerAnimProps =
-    shouldReduce ? {} :
-    state === "correct" ? { animate: { boxShadow: "0 0 22px rgba(0,255,156,0.35)" } } :
-    state === "incorrect" ? { animate: { x: [0,-4,4,-2,2,0], transition: { duration: 0.28 } } } :
-    {};
+  // Estilo por opción
+  const getOptionStyle = (i: number) => {
+    if (state === "correct") {
+      const isChosen = selectedIndex === i;
+      return {
+        borderColor: isChosen ? COLORS.green : COLORS.white15,
+        boxShadow: isChosen ? "0 0 16px rgba(0,255,156,0.28)" : undefined,
+      };
+    }
 
-  const showWhy = state === "correct" || state === "incorrect";
-  const onPrimary = () => (state === "idle" ? confirm() : next());
+    if (state === "incorrect") {
+      const isChosen = selectedIndex === i;
+      const isAnswer = correctIndex === i;
+      return {
+        borderColor: isChosen ? COLORS.magenta : isAnswer ? COLORS.green : COLORS.white15,
+        boxShadow: isAnswer
+          ? "0 0 16px rgba(0,255,156,0.28)"
+          : isChosen
+          ? "0 0 16px rgba(255,61,190,0.28)"
+          : undefined,
+      };
+    }
+
+    // IDLE
+    const isSelected = selectedIndex === i;
+    return {
+      borderColor: isSelected ? COLORS.yellow : COLORS.white15,
+      boxShadow: isSelected ? "0 0 12px rgba(249,196,0,0.22)" : undefined,
+    };
+  };
+
+  // A11y feedback textual
+  const liveText =
+    answerState === "correct"
+      ? "Correct answer."
+      : answerState === "incorrect"
+      ? "Incorrect answer. The correct option is highlighted."
+      : undefined;
+
+  // Motion variants
+  const variants = {
+    hidden: reduce ? {} : { y: 8, opacity: 0 },
+    show: reduce ? {} : { y: 0, opacity: 1, transition: { duration: 0.18, ease: "easeOut" } },
+  };
 
   return (
     <motion.section
-      key={q?.id ?? question}
-      variants={cardVariants}
-      initial={shouldReduce ? undefined : "initial"}
-      animate={shouldReduce ? undefined : "animate"}
-      className="rounded-2xl border bg-gradient-to-b from-black/30 to-black/60 backdrop-blur
-                 shadow-[0_0_0_1px_rgba(0,229,255,0.12),0_10px_40px_rgba(0,0,0,0.6)]
-                 border-[rgba(0,229,255,0.22)] p-4 md:p-6"
+      variants={variants}
+      initial="hidden"
+      animate="show"
+      className="rounded-2xl border bg-black/60 backdrop-blur p-5 md:p-6"
+      style={cardBorderStyle}
       aria-live="polite"
     >
-      <h2 className="text-lg md:text-xl font-Intermediate mb-4">{question}</h2>
+      <h2 className="text-lg md:text-xl font-semibold mb-4">{question}</h2>
 
-      <motion.div {...containerAnimProps} className="grid gap-3 will-change-transform">
-        {choices.map((c, i) => {
-          const isSelected = selectedIndex === i;
-          const isCorrect = i === correctIndex;
-          const showCorrect = state !== "idle" && isCorrect;
-          const showIncorrect = state === "incorrect" && isSelected && !isCorrect;
+      <div className="grid gap-3">
+        {choices.map((c, i) => (
+          <button
+            key={i}
+            type="button"
+            className="w-full text-left rounded-xl border p-4 transition-colors focus:outline-none focus:ring-2 focus:ring-[#F9C400]/60 hover:bg-white/5"
+            style={getOptionStyle(i)}
+            disabled={state !== "idle"}
+            onClick={() => selectChoice(i)}
+          >
+            <div className="flex items-start gap-3">
+              <span className="font-mono text-sm opacity-70 min-w-[1.2rem]">{i + 1}.</span>
+              <span className="text-sm md:text-base">{c}</span>
+            </div>
+          </button>
+        ))}
+      </div>
 
-          const border =
-            showCorrect
-              ? "border-[rgba(249, 196, 0, 1)] shadow-[0_0_14px_rgba(0,255,156,0.35)]"
-              : showIncorrect
-              ? "border-[rgba(255,61,190,0.85)] shadow-[0_0_14px_rgba(255,61,190,0.35)]"
-              : isSelected
-              ? "border-[rgba(0,229,255,0.8)]"
-              : "border-white/12";
-
-          return (
-            <button
-              key={i}
-              type="button"
-              className={`text-left rounded-xl border px-4 py-3 focus:outline-none focus:ring transition ${border}`}
-              onClick={() => selectChoice(i)}
-              aria-pressed={isSelected}
-              disabled={state !== "idle"}
-            >
-              <span className="opacity-70 mr-2">{i + 1}.</span>
-              {c}
-            </button>
-          );
-        })}
-      </motion.div>
-
+      {/* Acciones y feedback inferior */}
       <div className="mt-4 flex items-center gap-3">
+        {/* Confirmar */}
         <button
           type="button"
-          onClick={onPrimary}
-          className="rounded-lg px-4 py-2 border border-white/15 hover:bg-white/10 disabled:opacity-50"
-          disabled={state === "idle" && selectedIndex === null}
+          onClick={() => confirm()}
+          disabled={selectedIndex == null || state !== "idle"}
+          className="rounded-lg px-4 py-2 border text-black disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ background: COLORS.yellow, borderColor: COLORS.yellow }}
+          aria-disabled={selectedIndex == null || state !== "idle"}
         >
-          {state === "idle" ? "Confirm (Enter)" : "Next (Enter)"}
+          Confirm
         </button>
 
-        {showWhy && q?.explain && <ExplanationTooltip text={q.explain} />}
+        {/* Tooltip educativo (solo tras confirmar) */}
+        {showWhy && state !== "idle" && explain && (
+          <ExplanationTooltip text={explain} />
+        )}
 
+        {/* Texto de estado (tu bloque) */}
         <span className="text-xs opacity-80 ml-auto" aria-live="polite">
           {state === "correct" && "Correct! 🔐"}
           {state === "incorrect" && "Incorrect. See the explanation and continue."}
           {state === "idle" && "Use 1–4 to choose and Enter to confirm."}
         </span>
       </div>
+
+      {/* feedback a11y oculto para lectores */}
+      {liveText && (
+        <p className="sr-only" role="status">
+          {liveText}
+        </p>
+      )}
     </motion.section>
   );
 }

@@ -56,7 +56,7 @@ export default function HomePage() {
         </motion.h1>
 
         <motion.p {...fadeUp(0.08)} className="mt-4 max-w-2xl text-zinc-300">
-          Cypherpunk arcade to learn privacy, ZK, and encryption.
+          Cypherpunk arcade to learn Zcash, privacy, ZK, and encryption.
         </motion.p>
 
         <motion.div {...fadeUp(0.16)} className="mt-8 flex flex-wrap items-center gap-3">
@@ -99,7 +99,7 @@ export default function HomePage() {
           Game Modes <span className="text-base align-middle text-[var(--zx-yellow)]">[educational]</span>
         </motion.h2>
         <p className="mt-2 text-zinc-400 max-w-2xl">
-          Learn by playing: privacy/security trivias, top-down mazes, and cipher simulators.
+          Learn by playing: Zcash/privacy/security trivias, top-down mazes, and cipher simulators.
         </p>
 
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -118,9 +118,9 @@ export default function HomePage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-zinc-300">
-                Questions about Zcash privacy & security with explanatory tooltips.
+                Questions about Zcash, privacy & security with explanatory tooltips.
                 <div className="mt-4">
-                  <Link href="/trivias" aria-label="Go to Trivias mode">
+                  <Link href="#" aria-label="Go to Trivias mode">
                     <Button size="sm" className="bg-zx-green text-zx-ink hover:bg-zx-cyan">
                       Start
                     </Button>
@@ -136,7 +136,7 @@ export default function HomePage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <KeySquare className="text-zx-green" /> Mazes
-                                  <Badge
+                  <Badge
                     className="ml-auto text-[var(--zx-yellow)]"
                     style={{ borderColor: "rgba(255,214,10,0.4)" }}
                   >
@@ -147,10 +147,10 @@ export default function HomePage() {
               <CardContent className="text-zinc-300">
                 Top-down 2D with doors/keys and hidden ZK concepts to unlock.
                 <div className="mt-4">
-                  <Link href="/laberintos" aria-label="Go to Laberintos mode">
+                  <Link href="#" aria-label="Go to Laberintos mode">
                     <Button size="sm" className="bg-zx-green text-zx-ink hover:bg-zx-cyan">
                       Start
-                    </Button>
+                    </Button> 
                   </Link>
                 </div>
               </CardContent>
@@ -174,8 +174,8 @@ export default function HomePage() {
               <CardContent className="text-zinc-300">
                 Mini-game visual XOR inspired by encryption.
                 <div className="mt-4">
-                  <Link href="/simulators" aria-label="Go to Simulators mode">
-                    <Button size="sm" className="bg-zx-green text-zx-ink hover:bg-zx-cyan">
+                  <Link href="#" aria-label="Go to Simulators mode">
+                  <Button size="sm" className="bg-zx-green text-zx-ink hover:bg-zx-cyan">
                       Start
                     </Button>
                   </Link>
@@ -205,7 +205,7 @@ export default function HomePage() {
 
           <motion.div {...fadeUp(0.15)} className="rounded-xl border border-zx-green/25 bg-zx-mid/30 p-5 glow">
             <p className="font-mono text-zx-green">3. Complete challenges</p>
-            <p className="mt-2 text-zinc-300">Beat levels and learn privacy & crypto basics.</p>
+            <p className="mt-2 text-zinc-300">Beat levels and learn Zcash, privacy & crypto basics.</p>
           </motion.div>
         </div>
       </section>
@@ -266,7 +266,9 @@ export default function HomePage() {
             { title: "MVP", desc: "Core modes + basic UX.", status: "done" },
             { title: "Content", desc: "More questions, mazes, and ciphers.", status: "done" },
             { title: "Polishing", desc: "Animations, sounds, accessibility polish.", status: "done" },
-            { title: "On-chain integration", desc: "ZK/identity hooks & rewards.", status: "todo" },
+            { title: "On-chain integration", desc: "ZK/identity, memo & rewards.", status: "in-progress" },
+            { title: "New Game", desc: "Wallet simulator.", status: "todo" },
+            
           ].map((it, idx) => (
             <li key={idx} className="mb-6" role="listitem">
               <div
@@ -292,17 +294,39 @@ export default function HomePage() {
         <h2 className="text-2xl md:text-3xl font-mono text-zx-cyan">Team BlockBears</h2>
         <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {[
-            { name: "Zula", role: "PM" },
-            { name: "Mary", role: "BizDev" },
-            { name: "MaFer", role: "Developer" },
+            { name: "Zula",  role: "PM",        x: "https://x.com/Zulakyz" },
+            { name: "Mary",  role: "BizDev",    x: "https://x.com/mary_mlp8" },
+            { name: "MaFer", role: "Developer", x: "https://x.com/Soymaferlopezp" },
           ].map((m, i) => (
-            <article key={i} className="flex items-center gap-4 rounded-xl border border-zx-green/25 bg-zx-mid/30 p-4 glow">
+            <article
+              key={i}
+              className="flex items-center gap-4 rounded-xl border border-zx-green/25 bg-zx-mid/30 p-4 glow"
+            >
               <div className="grid size-12 place-items-center rounded-full border border-zx-green/60 text-2xl">
                 {bears[i % bears.length]}
               </div>
+
               <div>
                 <p className="font-mono text-white">{m.name}</p>
                 <p className="text-sm text-zinc-400">{m.role}</p>
+
+                {/* Single social link: X */}
+                <div className="mt-2">
+                  <a
+                    href={m.x}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`${m.name} on X`}
+                    className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs transition-colors"
+                    style={{
+                      border: "1px solid rgba(255,214,10,0.4)",        
+                      color: "var(--zx-yellow)",                        
+                    }}
+                  >
+                    {/* Simple X badge (icon-free to avoid extra deps) */}
+                    <span className="font-mono">X</span>
+                  </a>
+                </div>
               </div>
             </article>
           ))}

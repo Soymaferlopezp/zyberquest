@@ -144,12 +144,15 @@ export default function TriviaScreen() {
             />
 
             {q ? (
-              <QuestionCard
-                question={q.question}
-                choices={q.choices}
-                selectedIndex={selectedIndex}
-                state={answerState === "idle" ? "idle" : (answerState as "correct" | "incorrect" | "idle")}
-              />
+            <QuestionCard
+              question={q.question}
+              choices={q.choices}
+              selectedIndex={selectedIndex}
+              state={answerState === "idle" ? "idle" : (answerState as "correct" | "incorrect" | "idle")}
+              correctIndex={q.answerIndex}
+              explain={q.explain}        
+              showWhy={true}             
+            />
             ) : (
               <section className="rounded-2xl border border-white/10 p-6 bg-white/5 backdrop-blur">
                 <p className="opacity-70">Loading…</p>

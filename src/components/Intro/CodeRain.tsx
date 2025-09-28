@@ -33,7 +33,7 @@ export default function CodeRain({
     let height = 0;
     let dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
 
-    const glyphs = 'アイウエオカキクケコサシスセソ012345Zcash6789-=+*<>[]{}|/\\';
+    const glyphs = 'ZCASHアイウエオカキクケコサシスセソ0123456789-=+*<>[]{}|/\\ZCASH';
     const columns: number[] = [];
     const fontSizeBase = 14;
     let colCount = 0;

@@ -1,12 +1,13 @@
+export const revalidate = 0;                 
+export const dynamic = 'force-dynamic';      
+export const fetchCache = 'default-no-store'; 
+
 import "@/app/globals.css"; 
 import type { Metadata } from "next";
 
 import { inter, plexMono } from "./fonts";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
-
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "ZyberQuest — Cypherpunk Arcade",

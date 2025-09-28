@@ -50,9 +50,9 @@ export default function SummaryModal({ open }: SummaryModalProps) {
 
   const handleContinueNext = () => {
     if (!nextDiff) return;
-    // 1) Fijamos la nueva dificultad…
+    // 1) nueva dificultad…
     setDifficulty(nextDiff);
-    // 2) …y arrancamos en el micro-tick siguiente (evita carreras al leer estado)
+    // 2) …micro-tick siguiente 
     queueMicrotask(() => {
       startGame();
       // Al pasar a status "playing", TriviaScreen desmonta este modal automáticamente (open=false).

@@ -13,10 +13,10 @@ import { AudioProvider, useAudio } from '@/components/Intro/audio';
 import useIntroShortcuts from '@/components/Intro/useIntroShortcuts';
 
 const introLines = [
-  'Establishing connection…',
+  'Establishing connection with Zcash…',
   'Authenticating Runner…',
   'Access granted!',
-  'Your mission: Connect nodes. Break codes. Master the maze..',
+  'Your mission: Connect nodes. Learn. Break codes. Master the maze..',
 ];
 
 export default function IntroPage() {
@@ -35,7 +35,7 @@ function IntroBody() {
   const [canPlay, setCanPlay] = useState(false);
   const [exiting, setExiting] = useState(false);
 
-  // Watchdog por si acaso
+  // Watchdog
   useEffect(() => {
     const t = window.setTimeout(() => setCanPlay(true), 12000);
     return () => window.clearTimeout(t);
@@ -69,7 +69,7 @@ function IntroBody() {
     <main className="relative min-h-dvh bg-black overflow-hidden">
       <CodeRain className="z-0" density={0.6} speed={exiting ? 1.8 : 1.0} />
 
-      {/* Contenido principal */}
+      {/* Main content */}
       <AnimatePresence mode="wait">
         {!exiting && (
           <motion.section
