@@ -11,8 +11,8 @@ type QuestionCardProps = {
   selectedIndex: number | null;
   state: "idle" | "correct" | "incorrect";
   correctIndex: number;
-  explain?: string;        // 👈 NUEVO: texto educativo
-  showWhy?: boolean;       // 👈 NUEVO: controlar visibilidad del tooltip
+  explain?: string;
+  showWhy?: boolean;
 };
 
 const COLORS = {
@@ -33,9 +33,9 @@ export default function QuestionCard({
   showWhy = true,
 }: QuestionCardProps) {
   const reduce = useReducedMotion();
-  const { selectChoice, confirm, answerState } = useTriviaStore();
+  const { selectChoice, confirm, next, answerState } = useTriviaStore();
 
-  // Contenedor de la tarjeta con borde VERDE
+  // Contenedor de la tarjeta con borde verde (pedidos de UI)
   const cardBorderStyle = useMemo(
     () => ({
       borderColor: COLORS.green,
@@ -44,7 +44,7 @@ export default function QuestionCard({
     []
   );
 
-  // Estilo por opción
+  // Estilo por opción según estado
   const getOptionStyle = (i: number) => {
     if (state === "correct") {
       const isChosen = selectedIndex === i;
@@ -53,7 +53,6 @@ export default function QuestionCard({
         boxShadow: isChosen ? "0 0 16px rgba(0,255,156,0.28)" : undefined,
       };
     }
-
     if (state === "incorrect") {
       const isChosen = selectedIndex === i;
       const isAnswer = correctIndex === i;
@@ -66,7 +65,6 @@ export default function QuestionCard({
           : undefined,
       };
     }
-
     // IDLE
     const isSelected = selectedIndex === i;
     return {
@@ -83,11 +81,14 @@ export default function QuestionCard({
       ? "Incorrect answer. The correct option is highlighted."
       : undefined;
 
-  // Motion variants
+  // Motion
   const variants = {
     hidden: reduce ? {} : { y: 8, opacity: 0 },
     show: reduce ? {} : { y: 0, opacity: 1, transition: { duration: 0.18, ease: "easeOut" } },
   };
+
+  const showConfirm = state === "idle";
+  const showNext = state !== "idle";
 
   return (
     <motion.section
@@ -107,7 +108,7 @@ export default function QuestionCard({
             type="button"
             className="w-full text-left rounded-xl border p-4 transition-colors focus:outline-none focus:ring-2 focus:ring-[#F9C400]/60 hover:bg-white/5"
             style={getOptionStyle(i)}
-            disabled={state !== "idle"}
+            disabled={state !== "idle"} // bloquear cambios tras confirmar
             onClick={() => selectChoice(i)}
           >
             <div className="flex items-start gap-3">
@@ -120,24 +121,39 @@ export default function QuestionCard({
 
       {/* Acciones y feedback inferior */}
       <div className="mt-4 flex items-center gap-3">
-        {/* Confirmar */}
-        <button
-          type="button"
-          onClick={() => confirm()}
-          disabled={selectedIndex == null || state !== "idle"}
-          className="rounded-lg px-4 py-2 border text-black disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{ background: COLORS.yellow, borderColor: COLORS.yellow }}
-          aria-disabled={selectedIndex == null || state !== "idle"}
-        >
-          Confirm
-        </button>
+        {/* Confirmar (solo antes de confirmar) */}
+        {showConfirm && (
+          <button
+            type="button"
+            onClick={() => confirm()}
+            disabled={selectedIndex == null}
+            className="rounded-lg px-4 py-2 border text-black disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ background: COLORS.yellow, borderColor: COLORS.yellow }}
+            aria-disabled={selectedIndex == null}
+          >
+            Confirm
+          </button>
+        )}
 
         {/* Tooltip educativo (solo tras confirmar) */}
-        {showWhy && state !== "idle" && explain && (
+        {showNext && showWhy && explain && (
           <ExplanationTooltip text={explain} />
         )}
 
-        {/* Texto de estado (tu bloque) */}
+        {/* NEXT (clickable con mouse después de confirmar) */}
+        {showNext && (
+          <button
+            type="button"
+            onClick={() => next()}
+            className="rounded-lg px-4 py-2 border hover:bg-white/10"
+            style={{ borderColor: COLORS.cyan }}
+            aria-label="Next question"
+          >
+            Next
+          </button>
+        )}
+
+        {/* Texto de estado */}
         <span className="text-xs opacity-80 ml-auto" aria-live="polite">
           {state === "correct" && "Correct! 🔐"}
           {state === "incorrect" && "Incorrect. See the explanation and continue."}
