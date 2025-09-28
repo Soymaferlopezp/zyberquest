@@ -1,17 +1,17 @@
 [
   {
-    "id": "lv1-001",
+    "id": "zq-b01",
     "category": "basics",
     "type": "mcq",
     "question": "What is the symbol for Zcash?",
     "choices": ["ZSH", "ZEC", "ZC", "ZN"],
     "answerIndex": 1,
-    "explain": "ZEC is the official ticker symbol for Zcash.",
+    "explain": "ZEC is the ticker symbol for Zcash.",
     "difficulty": "Beginner",
     "tags": ["ticker", "basics"]
   },
   {
-    "id": "lv1-002",
+    "id": "zq-b02",
     "category": "history",
     "type": "mcq",
     "question": "In what year was Zcash launched?",
@@ -19,132 +19,132 @@
     "answerIndex": 1,
     "explain": "Zcash mainnet launched in 2016.",
     "difficulty": "Beginner",
-    "tags": ["history"]
+    "tags": ["history", "launch"]
   },
   {
-    "id": "lv1-003",
+    "id": "zq-b03",
     "category": "privacy",
     "type": "mcq",
     "question": "What is the main feature of Zcash?",
     "choices": ["Built-in games", "Smart contracts", "Optional privacy", "Instant fiat payments"],
     "answerIndex": 2,
-    "explain": "Zcash provides optional privacy through shielded transactions.",
+    "explain": "Zcash offers optional privacy through shielded transactions.",
     "difficulty": "Beginner",
     "tags": ["privacy", "shielded"]
   },
   {
-    "id": "lv1-004",
+    "id": "zq-b04",
     "category": "zk",
     "type": "mcq",
     "question": "What does the “Z” in Zcash stand for?",
     "choices": ["Zero Fees", "Zero Knowledge", "Zeta Encryption", "Zen Protocol"],
     "answerIndex": 1,
-    "explain": "“Z” refers to Zero-Knowledge cryptography used in Zcash.",
+    "explain": "“Z” aludes to Zero-Knowledge proofs used by Zcash.",
     "difficulty": "Beginner",
-    "tags": ["zk"]
+    "tags": ["zk", "snarks"]
   },
   {
-    "id": "lv1-005",
+    "id": "zq-b05",
     "category": "addresses",
     "type": "mcq",
     "question": "What are private addresses called in Zcash?",
     "choices": ["t-address", "z-address", "x-address", "w-address"],
     "answerIndex": 1,
-    "explain": "z-addresses are shielded/private. t-addresses are transparent.",
+    "explain": "Shielded/private addresses in Zcash are z-addresses.",
     "difficulty": "Beginner",
     "tags": ["addresses", "shielded"]
   },
   {
-    "id": "lv1-006",
+    "id": "zq-b06",
     "category": "units",
     "type": "mcq",
     "question": "What is the minimum unit of ZEC?",
     "choices": ["MilliZEC", "Zatoshi", "NanoZEC", "MiniZ"],
     "answerIndex": 1,
-    "explain": "A Zatoshi is the smallest unit of ZEC (like a satoshi in BTC).",
+    "explain": "Like satoshi in BTC, Zcash uses zatoshi as the minimum unit.",
     "difficulty": "Beginner",
     "tags": ["units"]
   },
   {
-    "id": "lv1-007",
+    "id": "zq-b07",
     "category": "blockchain",
     "type": "mcq",
     "question": "What is the function of the blockchain in Zcash?",
     "choices": ["To store movie files", "To record transactions", "To mine digital gold", "To create memes"],
     "answerIndex": 1,
-    "explain": "The blockchain is a public ledger that records transactions.",
+    "explain": "The blockchain records and orders transactions securely.",
     "difficulty": "Beginner",
-    "tags": ["blockchain", "basics"]
+    "tags": ["blockchain"]
   },
   {
-    "id": "lv1-008",
-    "category": "comparisons",
+    "id": "zq-b08",
+    "category": "comparison",
     "type": "mcq",
     "question": "Which of these currencies is most similar in design to Zcash?",
     "choices": ["Litecoin", "Bitcoin", "Ethereum", "Solana"],
     "answerIndex": 1,
-    "explain": "Zcash is a Bitcoin-derived chain with added privacy features.",
+    "explain": "Zcash is a Bitcoin fork with added privacy features.",
     "difficulty": "Beginner",
-    "tags": ["comparisons", "bitcoin"]
+    "tags": ["bitcoin", "design"]
   },
   {
-    "id": "lv1-009",
-    "category": "mining",
+    "id": "zq-b09",
+    "category": "consensus",
     "type": "mcq",
-    "question": "What resource is needed to mine Zcash?",
-    "choices": ["GPU or ASIC", "PlayStation", "Smartwatch", "WiFi router"],
-    "answerIndex": 0,
-    "explain": "Zcash mining uses computing Advancedware like GPUs or ASICs.",
+    "question": "Which consensus algorithm does Zcash currently use?",
+    "choices": ["Proof of Stake", "Proof of Work", "Delegated Proof of Stake", "Tendermint"],
+    "answerIndex": 1,
+    "explain": "Zcash currently uses Proof of Work.",
     "difficulty": "Beginner",
-    "tags": ["mining"]
+    "tags": ["consensus", "pow"]
   },
   {
-    "id": "lv1-010",
+    "id": "zq-b10",
     "category": "community",
     "type": "mcq",
     "question": "Which community supports Zcash with education and resources?",
     "choices": ["ZecHub", "Zec Army", "Zcash Club", "Zec Alliance"],
     "answerIndex": 0,
-    "explain": "ZecHub is a community hub producing educational Zcash content.",
+    "explain": "ZecHub is a community-driven hub for Zcash education.",
     "difficulty": "Beginner",
     "tags": ["community", "education"]
   },
 
   {
-    "id": "lv2-001",
+    "id": "zq-i01",
     "category": "memos",
     "type": "mcq",
     "question": "What is the function of encrypted memos in Zcash?",
     "choices": ["Save passwords", "Attach private messages to transactions", "Reduce block size", "Validate hashes"],
     "answerIndex": 1,
-    "explain": "Encrypted memos allow attaching private messages within shielded outputs.",
+    "explain": "Encrypted memos let you include private notes in shielded transactions.",
     "difficulty": "Intermediate",
-    "tags": ["memos", "shielded"]
+    "tags": ["memos", "privacy"]
   },
   {
-    "id": "lv2-002",
-    "category": "privacy",
+    "id": "zq-i02",
+    "category": "protocol",
     "type": "mcq",
-    "question": "Which type of transaction offers maximum privacy?",
-    "choices": ["t → t", "z → z", "t → z", "None"],
+    "question": "What is the average block interval in Zcash?",
+    "choices": ["1 minute", "2.5 minutes", "10 minutes", "30 seconds"],
     "answerIndex": 1,
-    "explain": "z→z shielded transactions hide sender, receiver, and amount.",
+    "explain": "Zcash targets ~2.5 minutes per block.",
     "difficulty": "Intermediate",
-    "tags": ["privacy", "shielded"]
+    "tags": ["blocks", "timing"]
   },
   {
-    "id": "lv2-003",
+    "id": "zq-i03",
     "category": "nodes",
     "type": "mcq",
     "question": "What is the original node software in C++?",
     "choices": ["Zebra", "Zcashd", "Zingo-cli", "Rustnode"],
     "answerIndex": 1,
-    "explain": "Zcashd is the original C++ node implementation.",
+    "explain": "Zcashd is the original full node implementation in C++.",
     "difficulty": "Intermediate",
     "tags": ["nodes", "zcashd"]
   },
   {
-    "id": "lv2-004",
+    "id": "zq-i04",
     "category": "nodes",
     "type": "mcq",
     "question": "Which client is written in Rust?",
@@ -155,225 +155,180 @@
     "tags": ["nodes", "zebra", "rust"]
   },
   {
-    "id": "lv2-005",
-    "category": "clients",
+    "id": "zq-i05",
+    "category": "wallets",
     "type": "mcq",
     "question": "What role does Zingo-cli play?",
-    "choices": ["Discord bot", "Command line client for Zcash", "Block explorer", "Advancedware wallet"],
+    "choices": ["Discord bot", "Command line client for Zcash", "Block explorer", "Hardware wallet"],
     "answerIndex": 1,
-    "explain": "Zingo-cli is a CLI client/wallet interacting with Zcash.",
+    "explain": "Zingo-cli is a CLI wallet/client for interacting with Zcash.",
     "difficulty": "Intermediate",
-    "tags": ["clients", "zingo"]
+    "tags": ["wallets", "cli"]
   },
   {
-    "id": "lv2-006",
-    "category": "shielded",
+    "id": "zq-i06",
+    "category": "economics",
     "type": "mcq",
-    "question": "What is a “shielded transaction”?",
-    "choices": ["Transaction that uses privacy protection", "Transaction on exchanges", "Multichain transaction", "Failed transaction"],
+    "question": "What is the maximum supply of Zcash?",
+    "choices": ["21 million", "42 million", "84 million", "210 million"],
     "answerIndex": 0,
-    "explain": "Shielded transactions use zk-proof pools to protect metadata.",
+    "explain": "Zcash has the same max supply as Bitcoin: 21 million.",
     "difficulty": "Intermediate",
-    "tags": ["shielded", "privacy"]
+    "tags": ["supply", "tokenomics"]
   },
   {
-    "id": "lv2-007",
-    "category": "network",
+    "id": "zq-i07",
+    "category": "zk",
     "type": "mcq",
-    "question": "What is needed to interact with the Zcash mainnet?",
-    "choices": ["A credit card", "Run a node or use RPC", "VPN", "Smart contract"],
-    "answerIndex": 1,
-    "explain": "You interact by running a node or consuming its RPC via a client.",
+    "question": "Which protocol allows Zcash to validate private transactions without revealing data?",
+    "choices": ["zk-SNARKs", "Lightning Network", "Ring Signatures", "zk-Plasma"],
+    "answerIndex": 0,
+    "explain": "Zcash uses zk-SNARKs to prove validity without revealing details.",
     "difficulty": "Intermediate",
-    "tags": ["nodes", "rpc"]
+    "tags": ["zk", "snarks", "privacy"]
   },
   {
-    "id": "lv2-008",
+    "id": "zq-i08",
     "category": "addresses",
     "type": "mcq",
     "question": "What is the difference between a “t” address and a “z” address?",
     "choices": ["The t is transparent, the z is private", "The t is for tokens, the z is for NFTs", "The t does not exist", "Both are identical"],
     "answerIndex": 0,
-    "explain": "t-addresses are transparent; z-addresses are shielded/private.",
+    "explain": "t-addrs are transparent; z-addrs are shielded/private.",
     "difficulty": "Intermediate",
     "tags": ["addresses", "privacy"]
   },
   {
-    "id": "lv2-009",
+    "id": "zq-i09",
     "category": "mining",
     "type": "mcq",
     "question": "What is the Zcash mining algorithm?",
     "choices": ["SHA-256", "Equihash", "Proof-of-Stake", "Scrypt"],
     "answerIndex": 1,
-    "explain": "Zcash uses Equihash as its PoW algorithm.",
+    "explain": "Zcash uses Equihash as its PoW mining algorithm.",
     "difficulty": "Intermediate",
     "tags": ["mining", "equihash"]
   },
   {
-    "id": "lv2-010",
+    "id": "zq-i10",
     "category": "governance",
     "type": "mcq",
     "question": "Which institution funds the development of Zcash and the community?",
     "choices": ["Zcash Foundation", "IMF", "Zec DAO", "ZecHub"],
     "answerIndex": 0,
-    "explain": "The Zcash Foundation supports protocol development and ecosystem efforts.",
+    "explain": "The Zcash Foundation supports development and the ecosystem.",
     "difficulty": "Intermediate",
     "tags": ["foundation", "funding"]
   },
 
   {
-    "id": "lv3-001",
-    "category": "nodes",
+    "id": "zq-a01",
+    "category": "mapping",
     "type": "mcq",
-    "question": "Match the term with its description:",
-    "choices": [
-      "Zebra=a (node in Rust), Zcashd=b (original node in C++), Zingo-cli=c (CLI client)",
-      "Zebra=b (C++), Zcashd=a (Rust), Zingo-cli=c (CLI client)",
-      "Zebra=c (CLI), Zcashd=a (Rust), Zingo-cli=b (C++)",
-      "Zebra=b (C++), Zcashd=c (CLI), Zingo-cli=a (Rust)"
-    ],
+    "question": "Match the term with its description: Zebra → ( ), Zcashd → ( ), Zingo-cli → ( )",
+    "choices": ["Node in Rust", "Original node in C++", "CLI client", "Explorer"],
     "answerIndex": 0,
-    "explain": "Zebra is a Rust node; Zcashd is the original C++ node; Zingo-cli is a CLI client.",
+    "explain": "Zebra = Rust node, Zcashd = original C++ node, Zingo-cli = CLI wallet/client.",
     "difficulty": "Advanced",
-    "tags": ["match", "nodes", "clients"]
+    "tags": ["nodes", "mapping"]
   },
   {
-    "id": "lv3-002",
-    "category": "tx-flow",
+    "id": "zq-a02",
+    "category": "wallets",
     "type": "mcq",
-    "question": "Order the steps to send a transaction in Zcash:",
-    "choices": [
-      "a→b→c→d (Build → Insert memo → Sign → Confirm on chain)",
-      "b→a→d→c",
-      "c→a→b→d",
-      "a→c→b→d"
-    ],
-    "answerIndex": 0,
-    "explain": "Typical flow: build the transaction, (optionally) add memo, sign, then confirmation on-chain.",
+    "question": "Which of these wallets are natively built in Zcash?",
+    "choices": ["Z-kool, Ledger, and Metamask", "Zingo, Phantom, and Zerion", "Zingo, YWallet, and Zashi", "Metamask, Muum, and Edge"],
+    "answerIndex": 2,
+    "explain": "Zingo, YWallet, and Zashi are wallets in the Zcash ecosystem.",
     "difficulty": "Advanced",
-    "tags": ["ordering", "transactions"]
+    "tags": ["wallets"]
   },
   {
-    "id": "lv3-003",
-    "category": "comparisons",
+    "id": "zq-a03",
+    "category": "lightwallet",
     "type": "mcq",
-    "question": "What is the key difference from Bitcoin?",
-    "choices": [
-      "Larger blocks",
-      "Optional privacy with shielded transactions",
-      "Maximum of 42 million coins",
-      "Does not use electricity"
-    ],
+    "question": "Which component allows Zcash light wallets to synchronize without downloading the entire blockchain?",
+    "choices": ["Zcashd", "lightwalletd", "Bitcoin Core", "Infura"],
     "answerIndex": 1,
-    "explain": "Zcash adds optional privacy using shielded pools and zk proofs.",
+    "explain": "lightwalletd serves compact blocks and data for light wallets.",
     "difficulty": "Advanced",
-    "tags": ["comparisons", "privacy"]
+    "tags": ["lightwalletd", "light-clients"]
   },
   {
-    "id": "lv3-004",
+    "id": "zq-a04",
     "category": "keys",
     "type": "mcq",
     "question": "What is a “viewing key” in Zcash?",
-    "choices": [
-      "Key to open an exchange account",
-      "Key to view private transactions without spending funds",
-      "Wallet password",
-      "Encrypted memo"
-    ],
+    "choices": ["Key to open an exchange", "Key to view private transactions without spending funds", "Wallet password", "Encrypted memo"],
     "answerIndex": 1,
-    "explain": "Viewing keys allow read-only visibility into shielded activity.",
+    "explain": "Viewing keys allow read-only visibility of shielded activity.",
     "difficulty": "Advanced",
     "tags": ["keys", "privacy"]
   },
   {
-    "id": "lv3-005",
-    "category": "privacy",
+    "id": "zq-a05",
+    "category": "flow",
     "type": "mcq",
     "question": "What happens if you send from t → z?",
-    "choices": [
-      "Invalid transaction",
-      "Only the recipient gets privacy",
-      "It is public",
-      "The amount disappears"
-    ],
+    "choices": ["Invalid transaction", "Only the recipient gets privacy", "It is public", "The amount disappears"],
     "answerIndex": 1,
-    "explain": "t→z shields the recipient side; the sender (t) remains transparent.",
+    "explain": "Moving funds to shielded improves recipient privacy; sender remains transparent for that UTXO.",
     "difficulty": "Advanced",
-    "tags": ["privacy", "flows"]
+    "tags": ["flow", "privacy"]
   },
   {
-    "id": "lv3-006",
+    "id": "zq-a06",
     "category": "halo",
     "type": "mcq",
     "question": "What does “Halo” represent in the context of Zcash?",
-    "choices": [
-      "A video game",
-      "A proving system without the need for a trusted setup",
-      "A type of address",
-      "An explorer"
-    ],
+    "choices": ["A video game", "A testing system without the need for trust configuration", "A type of address", "An explorer"],
     "answerIndex": 1,
-    "explain": "Halo enables recursive proofs eliminating traditional trusted setup requirements.",
+    "explain": "Halo enables recursive proofs without a trusted setup.",
     "difficulty": "Advanced",
     "tags": ["halo", "zk"]
   },
   {
-    "id": "lv3-007",
-    "category": "zk",
+    "id": "zq-a07",
+    "category": "economics",
     "type": "mcq",
-    "question": "What is achieved with Zero-Knowledge Proofs?",
-    "choices": [
-      "Validate information without revealing sensitive data",
-      "Mine faster",
-      "Pay lower fees",
-      "Create NFTs"
-    ],
-    "answerIndex": 0,
-    "explain": "ZK proofs let one prove correctness while keeping inputs private.",
+    "question": "How often does halving occur in Zcash?",
+    "choices": ["1,000 blocks (1 week)", "500,000 blocks (10 years)", "~210,000 blocks (approx. 4 years)", "Never"],
+    "answerIndex": 2,
+    "explain": "Like Bitcoin, Zcash halves roughly every 210,000 blocks (~4 years).",
     "difficulty": "Advanced",
-    "tags": ["zk", "privacy"]
+    "tags": ["halving", "tokenomics"]
   },
   {
-    "id": "lv3-008",
+    "id": "zq-a08",
     "category": "history",
     "type": "mcq",
     "question": "Which company was behind the initial creation of Zcash?",
     "choices": ["Electric Coin Company", "Coinbase", "ZecHub", "Parity"],
     "answerIndex": 0,
-    "explain": "ECC (Electric Coin Company) initiated Zcash.",
+    "explain": "ECC (Electric Coin Company) initiated Zcash’s development.",
     "difficulty": "Advanced",
     "tags": ["history", "ecc"]
   },
   {
-    "id": "lv3-009",
+    "id": "zq-a09",
     "category": "security",
     "type": "mcq",
     "question": "What happens if someone tries to falsify a Zcash transaction?",
-    "choices": [
-      "The node rejects it",
-      "An NFT is created",
-      "The blockchain is frozen",
-      "The miner receives double"
-    ],
+    "choices": ["The node rejects it", "An NFT is created", "The blockchain is frozen", "The miner receives double"],
     "answerIndex": 0,
     "explain": "Invalid or forged transactions are rejected by consensus rules.",
     "difficulty": "Advanced",
     "tags": ["security", "consensus"]
   },
   {
-    "id": "lv3-010",
-    "category": "memos",
+    "id": "zq-a10",
+    "category": "addresses",
     "type": "mcq",
-    "question": "What advantage do encrypted memos offer over public messages on the blockchain?",
-    "choices": [
-      "Increased speed",
-      "Privacy in communication",
-      "They create more blocks",
-      "They reduce gas"
-    ],
-    "answerIndex": 1,
-    "explain": "Encrypted memos provide private, contextual communication tied to payments.",
+    "question": "What type of addresses did Zcash introduce with the ZIP-316 standard?",
+    "choices": ["Transparent addresses (t-addr)", "Shielded addresses (z-addr)", "Unified addresses (UAs)", "Smart contract addresses"],
+    "answerIndex": 2,
+    "explain": "ZIP-316 introduced Unified Addresses to combine multiple receiver types.",
     "difficulty": "Advanced",
-    "tags": ["memos", "privacy"]
+    "tags": ["addresses", "zip-316", "ua"]
   }
 ]
