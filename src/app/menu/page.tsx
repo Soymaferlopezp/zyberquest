@@ -11,18 +11,18 @@ const RUNNERS = [
   {
     id: 'alpha',
     name: 'Runner Alpha',
-    img: '/runner/runner-f.png', 
+    img: '/runner/runner-f.png',
     width: 380,
     height: 380,
-    accent: '#FFD60A', 
+    accent: '#FFD60A',
   },
   {
     id: 'beta',
     name: 'Runner Beta',
-    img: '/runner/runner-m.png', 
+    img: '/runner/runner-m.png',
     width: 380,
     height: 380,
-    accent: '#00E5FF', 
+    accent: '#00E5FF',
   },
 ] as const;
 
@@ -33,7 +33,6 @@ type Mode = {
   accent: string;
   badge: string;
   meta: string;
-  keyNum: number;
   iconPath: string;
 };
 
@@ -45,7 +44,6 @@ const MODES: Mode[] = [
     accent: '#FFD60A',
     badge: 'Beginner • 4–6 min',
     meta: 'Single-player',
-    keyNum: 1,
     iconPath: 'M3 5h18v2H3zM5 9h14v2H5zM7 13h10v2H7zM9 17h6v2H9z',
   },
   {
@@ -55,17 +53,15 @@ const MODES: Mode[] = [
     accent: '#00FF9C',
     badge: 'Intermediate • 6–10 min',
     meta: 'Keyboard / WASD',
-    keyNum: 2,
     iconPath: 'M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z',
   },
   {
     title: 'Decryption simulators',
-    href: '/simulators',
+    href: '/simuladores',
     desc: 'Break codes (visual XOR) against the clock.',
     accent: '#FF3DBE',
     badge: 'Advanced • 5–8 min',
     meta: 'Timed challenges',
-    keyNum: 3,
     iconPath: 'M12 1a5 5 0 015 5v3h1a3 3 0 013 3v7a3 3 0 01-3 3H6a3 3 0 01-3-3v-7a3 3 0 013-3h1V6a5 5 0 015-5zm0 2a3 3 0 00-3 3v3h6V6a3 3 0 00-3-3z',
   },
 ];
@@ -111,21 +107,19 @@ export default function MenuPage() {
     first?.focus();
   };
 
-  // Atajos: 1/2 seleccionan runner; Enter confirma; Esc vuelve a /intro o resetea
+  // Atajos SOLO para selección de runner:
+  // 1/2 seleccionan runner; Enter confirma; (se elimina Escape)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === '1') setSelected(RUNNERS[0].id);
       else if (e.key === '2') setSelected(RUNNERS[1].id);
       else if (e.key === 'Enter') {
         if (!confirmed && selected) confirmRunner();
-      } else if (e.key === 'Escape') {
-        if (confirmed) clearRunner();
-        else router.push('/intro');
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [router, confirmed, selected]);
+  }, [confirmed, selected]);
 
   const activeRunner = useMemo(
     () => RUNNERS.find(r => r.id === selected) ?? null,
@@ -145,28 +139,48 @@ export default function MenuPage() {
 
   const fadeUpV = rm
     ? ({ hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0 } } as any)
-    : ({ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } } } as any);
+    : ({
+        hidden: { opacity: 0, y: 10 },
+        show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+      } as any);
 
   const fadeDownV = rm
     ? ({ hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0 } } as any)
-    : ({ hidden: { opacity: 0, y: -8 }, show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } } } as any);
+    : ({
+        hidden: { opacity: 0, y: -8 },
+        show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+      } as any);
 
   const slideLeftV = rm
     ? ({ hidden: { opacity: 1, x: 0 }, show: { opacity: 1, x: 0 } } as any)
-    : ({ hidden: { opacity: 0, x: -14 }, show: { opacity: 1, x: 0, transition: { duration: 0.5, ease: 'easeOut' } } } as any);
+    : ({
+        hidden: { opacity: 0, x: -14 },
+        show: { opacity: 1, x: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+      } as any);
 
   const slideRightV = rm
     ? ({ hidden: { opacity: 1, x: 0 }, show: { opacity: 1, x: 0 } } as any)
-    : ({ hidden: { opacity: 0, x: 14 }, show: { opacity: 1, x: 0, transition: { duration: 0.5, ease: 'easeOut' } } } as any);
+    : ({
+        hidden: { opacity: 0, x: 14 },
+        show: { opacity: 1, x: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+      } as any);
 
   return (
     <main className="relative min-h-dvh bg-black text-neutral-200">
       {/* Fondo sutil */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0"
-             style={{ background: 'radial-gradient(1200px 600px at 50% -10%, #00E5FF0f, transparent 60%)' }} />
-        <div className="absolute inset-0 opacity-[0.04]"
-             style={{ backgroundImage: 'linear-gradient(transparent 31px, rgba(255,255,255,0.6) 32px), linear-gradient(90deg, transparent 31px, rgba(255,255,255,0.6) 32px)', backgroundSize: '32px 32px' }} />
+        <div
+          className="absolute inset-0"
+          style={{ background: 'radial-gradient(1200px 600px at 50% -10%, #00E5FF0f, transparent 60%)' }}
+        />
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage:
+              'linear-gradient(transparent 31px, rgba(255,255,255,0.6) 32px), linear-gradient(90deg, transparent 31px, rgba(255,255,255,0.6) 32px)',
+            backgroundSize: '32px 32px',
+          }}
+        />
       </div>
 
       <motion.section
@@ -177,9 +191,7 @@ export default function MenuPage() {
       >
         {/* Hero */}
         <motion.header className="mb-6 text-center" variants={fadeDownV}>
-          <p className="font-['IBM_Plex_Mono',monospace] text-[#FFD60A] tracking-widest text-xs mb-1">
-            ZYBERQUEST / MENU
-          </p>
+          {/* Se eliminó: "ZYBERQUEST / MENU" */}
           <h1 className="font-['IBM_Plex_Mono',monospace] text-4xl md:text-5xl text-[#00E5FF]">
             Choose your Runner
           </h1>
@@ -239,7 +251,16 @@ export default function MenuPage() {
             <div className="mt-3 flex items-center justify-center gap-2 text-[11px] text-neutral-400">
               <span className="rounded-lg border border-white/15 bg-black/50 px-2 py-0.5">1 / 2 to select</span>
               <span className="rounded-lg border border-white/15 bg-black/50 px-2 py-0.5">Enter to confirm</span>
-              <span className="rounded-lg border border-white/15 bg-black/50 px-2 py-0.5">Esc to return</span>
+              {/* Reemplazamos "Esc to return" por botón Change Runner (click) */}
+              {confirmed ? (
+                <button
+                  type="button"
+                  onClick={clearRunner}
+                  className="rounded-lg border border-white/15 bg-black/50 px-2 py-0.5 hover:bg-black/60 text-neutral-100"
+                >
+                  Change Runner
+                </button>
+              ) : null}
             </div>
           </motion.div>
 
@@ -271,7 +292,11 @@ export default function MenuPage() {
         </motion.div>
 
         {/* Capsule / footer controls */}
-        <motion.div id="runner-select" className="mt-10 grid gap-4 md:grid-cols-[1fr_auto] items-center" variants={fadeUpV}>
+        <motion.div
+          id="runner-select"
+          className="mt-10 grid gap-4 md:grid-cols-[1fr_auto] items-center"
+          variants={fadeUpV}
+        >
           <div
             className="rounded-xl border border-white/10 bg-white/[0.03] p-4 shadow-[0_0_24px_rgba(0,255,156,0.08)]"
             aria-live="polite"
@@ -286,18 +311,13 @@ export default function MenuPage() {
           </div>
 
           <div className="flex flex-wrap items-center justify-start md:justify-end gap-3 text-xs">
-            <Link href="/intro" className="rounded-lg border border-white/15 bg-black/40 px-3 py-1.5 text-neutral-100 hover:bg-black/60">
+            <Link
+              href="/intro"
+              className="rounded-lg border border-white/15 bg-black/40 px-3 py-1.5 text-neutral-100 hover:bg-black/60"
+            >
               ← Return
             </Link>
-            {confirmed && (
-              <button
-                type="button"
-                onClick={clearRunner}
-                className="rounded-lg border border-white/15 bg-black/40 px-3 py-1.5 text-neutral-100 hover:bg-black/60"
-              >
-                Change runner
-              </button>
-            )}
+            
           </div>
         </motion.div>
       </motion.section>
@@ -308,7 +328,10 @@ export default function MenuPage() {
 // ===================== UI bits (in-file) =====================
 
 function RunnerCard({
-  runner, selected, onSelect, reduce,
+  runner,
+  selected,
+  onSelect,
+  reduce,
 }: {
   runner: typeof RUNNERS[number];
   selected: boolean;
@@ -382,7 +405,9 @@ function StatusChip({ text, color }: { text: string; color: string }) {
 }
 
 function ModeCard({
-  mode, disabled, onRequireRunner,
+  mode,
+  disabled,
+  onRequireRunner,
 }: {
   mode: Mode;
   disabled: boolean;
@@ -408,14 +433,14 @@ function ModeCard({
       />
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"
+        className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity group-hover:opacity-100"
         style={{ boxShadow: `0 12px 40px ${mode.accent}3d, inset 0 0 0 1px ${mode.accent}66` }}
       />
 
       <div className="flex items-start gap-3">
         <div className="mt-0.5 h-9 w-9 shrink-0 rounded-lg border border-white/10 bg-black/40 flex items-center justify-center text-neutral-100">
           <svg width="18" height="18" viewBox="0 0 24 24" className="opacity-90">
-            <path d={mode.iconPath} fill="currentColor"/>
+            <path d={mode.iconPath} fill="currentColor" />
           </svg>
         </div>
         <div className="min-w-0">
@@ -435,23 +460,23 @@ function ModeCard({
         </div>
       </div>
 
-      <div className="mt-4 flex items-center gap-3">
-        <span className="text-xs text-neutral-300">Press <kbd className="rounded bg-white/10 px-1.5 py-0.5 text-[11px] border border-white/15">Enter</kbd></span>
-        <span className="text-xs text-neutral-500">|</span>
-        <span className="text-xs text-neutral-300">Shortcut:</span>
-        <span className="text-xs" style={{ color: mode.accent }}>{mode.keyNum}</span>
-
+      {/* Footer simple: solo CTA visual, sin “Press ENTER” ni “Shortcut” */}
+      <div className="mt-4 flex items-center">
         <span
           role="button"
           aria-hidden
-          className={`ml-auto rounded-lg border px-3 py-1.5 text-xs ${disabled ? 'border-white/15 bg-black/30 text-neutral-400' : 'border-white/15 bg-black/40 text-neutral-100 group-hover:bg-black/60'}`}
+          className={`ml-auto rounded-lg border px-3 py-1.5 text-xs ${
+            disabled
+              ? 'border-white/15 bg-black/30 text-neutral-400'
+              : 'border-white/15 bg-black/40 text-neutral-100 group-hover:bg-black/60'
+          }`}
         >
           Entrar
         </span>
       </div>
 
       {disabled && (
-        <div className="absolute inset-0 rounded-2xl bg-black/30 backdrop-blur-[1px] grid place-items-center">
+        <div className="absolute inset-0 grid place-items-center rounded-2xl bg-black/30 backdrop-blur-[1px]">
           <div className="rounded-md border border-white/15 bg-black/60 px-3 py-1.5 text-xs text-neutral-200">
             Select & confirm a Runner first
           </div>
@@ -462,12 +487,7 @@ function ModeCard({
 
   if (disabled) {
     return (
-      <button
-        type="button"
-        onClick={onRequireRunner}
-        className="block w-full text-left"
-        aria-disabled="true"
-      >
+      <button type="button" onClick={onRequireRunner} className="block w-full text-left" aria-disabled="true">
         {CardInner}
       </button>
     );

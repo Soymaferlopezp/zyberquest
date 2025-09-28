@@ -11,13 +11,14 @@ type ModeItem = {
   desc: string;
   href: string;
   accent: string; // hex
-  hint?: string;
   className?: string;
+  badge?: string;
+  meta?: string;
 };
 
 type ModeGridProps = {
   onActivate?: (href: string) => void;
-  cardProps?: Partial<Pick<ModeCardProps, 'className' | 'ctaLabel' | 'hint'>>;
+  cardProps?: Partial<Pick<ModeCardProps, 'className' | 'ctaLabel'>>;
 };
 
 const MODES: ModeItem[] = [
@@ -27,23 +28,26 @@ const MODES: ModeItem[] = [
     desc: 'Preguntas rápidas para aprender privacidad, ZK y Zcash.',
     href: '/trivias',
     accent: '#00FF9C', // zx-green
-    hint: 'Warm-up de conocimiento',
+    badge: 'Beginner • 4–6 min',
+    meta: 'Single-player',
   },
   {
     key: 'laberintos',
     title: 'Laberintos',
     desc: 'Explora mapas y desbloquea rutas con pistas cifradas.',
-    href: '/labyrinth',
+    href: '/laberintos',
     accent: '#FFD60A', // zx-yellow
-    hint: 'Exploration + puzzles',
+    badge: 'Intermediate • 6–10 min',
+    meta: 'Keyboard / WASD',
   },
   {
     key: 'simuladores',
     title: 'Simuladores',
     desc: 'Rompe sustitución simple y prueba el puzzle XOR visual.',
-    href: '/simulators',
+    href: '/simuladores',
     accent: '#FF3DBE', // zx-magenta
-    hint: 'Hands-on crypto',
+    badge: 'Advanced • 5–8 min',
+    meta: 'Timed challenges',
   },
 ];
 
@@ -56,21 +60,19 @@ export default function ModeGrid({ onActivate, cardProps }: ModeGridProps) {
         hidden: { opacity: 0 },
         show: { opacity: 1, transition: { staggerChildren: 0.06 } },
       }}
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+      className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
     >
       {MODES.map((m) => (
-        <motion.div
-          key={m.key}
-          variants={{ hidden: { y: 8, opacity: 0 }, show: { y: 0, opacity: 1 } }}
-        >
+        <motion.div key={m.key} variants={{ hidden: { y: 8, opacity: 0 }, show: { y: 0, opacity: 1 } }}>
           <ModeCard
             title={m.title}
             desc={m.desc}
             href={m.href}
             accent={m.accent}
-            hint={cardProps?.hint ?? m.hint}
+            badge={m.badge}
+            meta={m.meta}
             className={cardProps?.className ?? m.className}
-            ctaLabel={cardProps?.ctaLabel ?? 'Enter'}
+            ctaLabel={cardProps?.ctaLabel ?? 'Entrar'}
             onActivate={onActivate}
           />
         </motion.div>

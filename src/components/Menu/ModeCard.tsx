@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import React from 'react';
-import { cn } from '@/lib/utils';
 
 export type ModeCardProps = {
   title: string;
@@ -15,15 +14,22 @@ export type ModeCardProps = {
   icon?: React.ReactNode;   // mini svg
   disabled?: boolean;
   className?: string;
-  hint?: string;
   ctaLabel?: string;
   onActivate?: (href: string) => void;
 };
 
 export default function ModeCard({
-  title, href, desc, accent, badge, meta, icon, disabled = false, ctaLabel = 'Play', className = '',
+  title,
+  href,
+  desc,
+  accent,
+  badge,
+  meta,
+  icon,
+  disabled = false,
+  ctaLabel = 'Entrar',
+  className = '',
 }: ModeCardProps) {
-
   const CardInner = (
     <motion.div
       initial={false}
@@ -34,23 +40,14 @@ export default function ModeCard({
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00E5FF]
         ${className}`}
       style={{
-        // glow sutil base (static) para cohesión
         boxShadow: `0 0 0 1px rgba(255,255,255,0.02), 0 0 24px ${accent}22`,
       }}
       aria-disabled={disabled}
       tabIndex={-1}
     >
       {/* Borde de color (hover intensifica) */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-2xl transition-shadow"
-        style={{ boxShadow: `inset 0 0 0 1px ${accent}44` }}
-      />
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"
-        style={{ boxShadow: `0 0 34px ${accent}33` }}
-      />
+      <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl transition-shadow" style={{ boxShadow: `inset 0 0 0 1px ${accent}44` }} />
+      <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity group-hover:opacity-100" style={{ boxShadow: `0 0 34px ${accent}33` }} />
 
       <div className="flex items-start gap-3">
         {icon && (
@@ -66,10 +63,7 @@ export default function ModeCard({
           {(badge || meta) && (
             <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
               {badge && (
-                <span
-                  className="rounded-md border border-white/15 bg-black/40 px-2 py-0.5 text-neutral-100"
-                  style={{ boxShadow: `0 0 12px ${accent}22` }}
-                >
+                <span className="rounded-md border border-white/15 bg-black/40 px-2 py-0.5 text-neutral-100" style={{ boxShadow: `0 0 12px ${accent}22` }}>
                   {badge}
                 </span>
               )}
@@ -79,21 +73,18 @@ export default function ModeCard({
         </div>
       </div>
 
-      <div className="mt-4 flex items-center gap-3">
-        <span className="text-xs text-neutral-300">
-          Press <kbd className="rounded bg-white/10 px-1.5 py-0.5 text-[11px] border border-white/15">Enter</kbd>
-        </span>
-        <span className="text-xs text-neutral-500">|</span>
-        <span className="text-xs text-neutral-300">Shortcut:</span>
-        <span className="text-xs" style={{ color: accent }}>1 / 2 / 3</span>
-
-        {/* CTA visual (NO <a> interno para evitar anchors anidados) */}
+      {/* Footer simple: solo CTA visual (sin “Press ENTER” ni “Shortcut”) */}
+      <div className="mt-4 flex items-center">
         <span
           role="button"
           aria-hidden
-          className="ml-auto rounded-lg border border-white/15 bg-black/40 px-3 py-1.5 text-xs text-neutral-100 group-hover:bg-black/60"
+          className={`ml-auto rounded-lg border px-3 py-1.5 text-xs ${
+            disabled
+              ? 'border-white/15 bg-black/30 text-neutral-400'
+              : 'border-white/15 bg-black/40 text-neutral-100 group-hover:bg-black/60'
+          }`}
         >
-          Entrar
+          {ctaLabel}
         </span>
       </div>
     </motion.div>
