@@ -16,7 +16,7 @@ export function Header() {
           <a href="#features" className="text-zinc-300 hover:text-white">Features</a>
           <a href="#team" className="text-zinc-300 hover:text-white">Team</a>
           <Link
-            href="#cta"
+            href="/start"
             className="text-zx-ink bg-zx-green px-3 py-1.5 rounded glow hover:bg-zx-cyan transition-colors"
           >
             Play

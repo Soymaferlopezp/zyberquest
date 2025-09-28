@@ -60,15 +60,9 @@ export default function HomePage() {
         </motion.p>
 
         <motion.div {...fadeUp(0.16)} className="mt-8 flex flex-wrap items-center gap-3">
-          {/* PLAY: no redirect yet, shield alert */}
-          <Link href="#" aria-label="Play (wallet coming soon)">
-            <Button
-              className="bg-zx-green text-zx-ink hover:bg-zx-cyan transition-colors"
-              onClick={(e) => {
-                e.preventDefault();
-                alert("🛡️ Wallet connection coming soon.");
-              }}
-            >
+          
+          <Link href="/start" aria-label="Play">
+            <Button>
               Play <ArrowRight className="ml-2 size-4" />
             </Button>
           </Link>
@@ -120,7 +114,7 @@ export default function HomePage() {
               <CardContent className="text-zinc-300">
                 Questions about Zcash, privacy & security with explanatory tooltips.
                 <div className="mt-4">
-                  <Link href="#" aria-label="Go to Trivias mode">
+                  <Link href="/start" aria-label="Go to Trivias mode">
                     <Button size="sm" className="bg-zx-green text-zx-ink hover:bg-zx-cyan">
                       Start
                     </Button>
@@ -147,7 +141,7 @@ export default function HomePage() {
               <CardContent className="text-zinc-300">
                 Top-down 2D with doors/keys and hidden ZK concepts to unlock.
                 <div className="mt-4">
-                  <Link href="#" aria-label="Go to Laberintos mode">
+                  <Link href="/start" aria-label="Go to Laberintos mode">
                     <Button size="sm" className="bg-zx-green text-zx-ink hover:bg-zx-cyan">
                       Start
                     </Button> 
@@ -174,7 +168,7 @@ export default function HomePage() {
               <CardContent className="text-zinc-300">
                 Mini-game visual XOR inspired by encryption.
                 <div className="mt-4">
-                  <Link href="#" aria-label="Go to Simulators mode">
+                  <Link href="/start" aria-label="Go to Simulators mode">
                   <Button size="sm" className="bg-zx-green text-zx-ink hover:bg-zx-cyan">
                       Start
                     </Button>
@@ -359,7 +353,7 @@ export default function HomePage() {
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <a
-              href="#modes"
+              href="/start"
               className="inline-flex items-center rounded-md bg-zx-green px-4 py-2 text-zx-ink hover:bg-zx-cyan transition-colors glow"
             >
               Play now
