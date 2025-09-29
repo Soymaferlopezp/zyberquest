@@ -57,7 +57,7 @@ const MODES: Mode[] = [
   },
   {
     title: 'Decryption simulators',
-    href: '/simuladores',
+    href: '/simulators',
     desc: 'Break codes (visual XOR) against the clock.',
     accent: '#FF3DBE',
     badge: 'Advanced • 5–8 min',

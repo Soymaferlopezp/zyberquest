@@ -44,17 +44,16 @@ export default function SimulatorsPage() {
     router.push('/simulators')
   }
 
-  // Teclas globales
+  // Teclas globales (sin ESC)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const k = e.key.toLowerCase()
       if (k === 'p') togglePause()
       if (k === 'r' && difficulty) restartCurrent()
-      if (e.key === 'Escape') router.push('/simulators')
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [router, togglePause, difficulty])
+  }, [togglePause, difficulty])
 
   // Timer (solo cuando hay partida)
   useEffect(() => {
@@ -154,7 +153,6 @@ export default function SimulatorsPage() {
                       Start • {localDiff === 'beginner' ? 'Beginner' : localDiff === 'intermediate' ? 'Intermediate' : 'Advanced'}
                     </button>
 
-                    {/* NUEVO: volver al menú general de juegos */}
                     <button
                       onClick={() => router.push('/menu')}
                       className="inline-flex items-center justify-center rounded-lg border border-white/20 px-4 py-3 text-sm hover:border-[var(--zx-yellow)] focus:outline-none focus:ring-2 focus:ring-[var(--zx-yellow)]"
@@ -164,14 +162,13 @@ export default function SimulatorsPage() {
                     </button>
                   </div>
 
-                  {/* Shortcuts */}
+                  {/* Shortcuts (sin ESC) */}
                   <div className="mt-5 rounded-lg border border-white/15 bg-black/30 p-3">
                     <div className="text-xs text-[var(--zx-yellow)] font-medium mb-1">Controls</div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-1 text-xs md:text-sm">
                       <div>1) Keyboard &amp; mouse.</div>
                       <div>2) P Pause / Resume</div>
                       <div>3) R Restart</div>
-                      <div>4) Esc Back to Menu</div>
                     </div>
                   </div>
                 </div>
@@ -206,7 +203,7 @@ export default function SimulatorsPage() {
               animate={{ opacity: 1, x: 0, transition: { duration: 0.7, ease: 'easeOut' } }}
               aria-hidden="true"
             >
-              <div className="relative mx-auto w-[88%] md:w-full">
+              <div className="relative mx-auto w-[88%] md:w	full">
                 <div
                   className="absolute -inset-6 rounded-3xl blur-2xl"
                   style={{ background: 'radial-gradient(60% 60% at 50% 50%, rgba(255,61,190,.35), transparent)' }}
@@ -232,14 +229,14 @@ export default function SimulatorsPage() {
         <section className="relative z-10 mx-auto max-w-6xl px-6 py-8">
           <HUD />
 
-          {/* Overlay de pausa con 3 opciones */}
+          {/* Overlay de pausa con 3 opciones (sin mencionar ESC) */}
           {isPaused && (
             <div className="fixed inset-0 z-40 grid place-items-center bg-black/75 backdrop-blur-sm">
               <div className="w-[min(520px,92vw)] rounded-2xl border border-white/10 bg-black/80 p-6 text-center">
                 <div className="text-xl font-semibold text-[var(--zx-magenta)] mb-2">Paused</div>
                 <p className="opacity-80 mb-4 text-sm">
-                  Use <kbd className="border px-1">P</kbd> to resume, <kbd className="border px-1">R</kbd> to restart,
-                  or <kbd className="border px-1">Esc</kbd> to go back to menu.
+                  Use <kbd className="border px-1">P</kbd> to resume, or <kbd className="border px-1">R</kbd> to restart. 
+                  You can also use the button below to go back to the menu.
                 </p>
                 <div className="flex flex-wrap justify-center gap-3">
                   <button
@@ -259,7 +256,7 @@ export default function SimulatorsPage() {
                   <button
                     onClick={goToMenu}
                     className="rounded-md border border-white/20 px-4 py-2 hover:border-[var(--zx-yellow)] focus:outline-none focus:ring-2 focus:ring-[var(--zx-yellow)]"
-                    title="Esc"
+                    title="Go to menu"
                   >
                     Go to Menu
                   </button>
