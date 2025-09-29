@@ -72,7 +72,7 @@ export default function ModeGrid({ onActivate, cardProps }: ModeGridProps) {
             badge={m.badge}
             meta={m.meta}
             className={cardProps?.className ?? m.className}
-            ctaLabel={cardProps?.ctaLabel ?? 'Entrar'}
+            ctaLabel={cardProps?.ctaLabel ?? ''}
             onActivate={onActivate}
           />
         </motion.div>

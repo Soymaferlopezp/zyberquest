@@ -471,7 +471,7 @@ function ModeCard({
               : 'border-white/15 bg-black/40 text-neutral-100 group-hover:bg-black/60'
           }`}
         >
-          Entrar
+          Start
         </span>
       </div>
 
