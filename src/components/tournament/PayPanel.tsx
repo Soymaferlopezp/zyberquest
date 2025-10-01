@@ -1,4 +1,3 @@
-// components/tournament/PayPanel.tsx
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -147,6 +146,11 @@ export default function PayPanel() {
         if (json.status === 'CONFIRMED') {
           setStatus('CONFIRMED');
           setConfirmations(1);
+
+          // Guarda el memo (code) confirmado para la siguiente pantalla
+          try {
+            sessionStorage.setItem('tournament_code', memo);
+          } catch {}
         } else if (json.status === 'EXPIRED') {
           setStatus('EXPIRED');
         } else {
@@ -183,7 +187,13 @@ export default function PayPanel() {
 
   function handlePlay() {
     if (!canPlay) return;
+
+    // Reafirma guardar el code antes de salir
+    try { sessionStorage.setItem('tournament_code', memo); } catch {}
+
+    // Mantiene la ruta actual (play). Si se va a trivia, cambia a /tournament/trivia
     router.push(`/tournament/play?code=${encodeURIComponent(memo)}`);
+    // router.push(`/tournament/trivia?code=${encodeURIComponent(memo)}`);
   }
 
   return (

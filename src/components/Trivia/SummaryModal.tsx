@@ -1,7 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTriviaStore } from "@/store";
+import { getTournamentCode, saveTournamentResult } from "@/lib/tournament";
 
 type SummaryModalProps = { open: boolean };
 
@@ -25,6 +26,9 @@ function normalize(d: unknown): Diff {
 
 export default function SummaryModal({ open }: SummaryModalProps) {
   const router = useRouter();
+  const sp = useSearchParams();
+  const isTournament = sp.get("mode") === "tournament";
+
   const {
     startGame,
     getSummary,
@@ -40,11 +44,42 @@ export default function SummaryModal({ open }: SummaryModalProps) {
   const diff = normalize(difficulty);
   const label = LABEL_BY_DIFF[diff];
   const nextDiff = NEXT_BY_DIFF[diff];
+  const isEndOfRun = nextDiff === null; // Terminaste Advanced → 3 niveles
 
-  const handleContinueNext = () => {
+  async function submitIfEndRun() {
+    if (!isEndOfRun || !isTournament) return;
+
+    const code = getTournamentCode();
+    if (!code) return;
+
+    const levelsPassed = 3; // final de Advanced
+    const score = Number(stats?.score ?? 0);
+
+    await saveTournamentResult({
+      code,
+      score,
+      levelsPassed,
+      playedAt: new Date().toISOString(),
+    });
+  }
+
+  const handleContinueNext = async () => {
+    // Aún no termina la run → no enviamos resultado
     if (!nextDiff) return;
     setDifficulty(nextDiff as any);
     queueMicrotask(() => startGame());
+  };
+
+  const handlePlayAgain = async () => {
+    // Si era fin de run y torneo, registra antes de reiniciar
+    await submitIfEndRun();
+    startGame();
+  };
+
+  const handleBackToMenu = async () => {
+    await submitIfEndRun();
+    resetToIntro();
+    router.push("/trivias"); // menú de trivias existente
   };
 
   return (
@@ -82,7 +117,7 @@ export default function SummaryModal({ open }: SummaryModalProps) {
             <button
               className="rounded-lg px-4 py-2 border hover:bg-white/10"
               style={{ borderColor: "#F9C400" }}
-              onClick={() => startGame()}
+              onClick={handlePlayAgain}
             >
               Play again
             </button>
@@ -91,7 +126,7 @@ export default function SummaryModal({ open }: SummaryModalProps) {
           <button
             className="rounded-lg px-4 py-2 border hover:bg-white/10"
             style={{ borderColor: "#F9C400" }}
-            onClick={() => { resetToIntro(); router.push("/trivias"); }}
+            onClick={handleBackToMenu}
           >
             Back to menu
           </button>

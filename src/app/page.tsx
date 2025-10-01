@@ -263,8 +263,8 @@ export default function HomePage() {
             { title: "MVP", desc: "Core modes + basic UX.", status: "done" },
             { title: "Content", desc: "More questions, mazes, and ciphers.", status: "done" },
             { title: "Polishing", desc: "Animations, sounds, accessibility polish.", status: "done" },
-            { title: "On-chain integration", desc: "ZK/identity, memo & rewards.", status: "in-progress" },
-            { title: "New Game", desc: "Wallet simulator.", status: "todo" },
+            { title: "On-chain integration", desc: "ZK/identity, memo & rewards.", status: "done" },
+            { title: "New Game", desc: "Wallet simulator.", status: "in-progress" },
             
           ].map((it, idx) => (
             <li key={idx} className="mb-6" role="listitem">
