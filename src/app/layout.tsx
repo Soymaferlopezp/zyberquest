@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 import { inter, plexMono } from "./fonts";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
+import AppToaster from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: "ZyberQuest — Cypherpunk Arcade",
@@ -41,7 +42,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
 
         <Header />
-        <main id="content" className="pt-16 pb-16 font-sans">{children}</main>
+        <main id="content" className="pt-16 pb-16 font-sans">{children} </main>
+         <AppToaster />
         <Footer />
       </body>
     </html>

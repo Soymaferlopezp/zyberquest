@@ -16,6 +16,9 @@ const fadeUp = (delay = 0) => ({
 
 export default function HomePage() {
   // Donation modal state
+  // --- Donation config ---
+  const walletAddress = "u1h3tjy9mvevd9agac79eqxxdz62tl8nus4uelzdlddwekhjpzpu4jn2yqe8zanl3zpyj4793qatc7hj7wwpf4rt42xratu2rvfvpvq0ax"; 
+  const walletQrSrc = "/qr/zyberquest-qr.jpg";            
   const [donationOpen, setDonationOpen] = useState(false);
   const openDonation = useCallback(() => setDonationOpen(true), []);
   const closeDonation = useCallback(() => {
@@ -391,60 +394,80 @@ export default function HomePage() {
         animate={donationOpen ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.98, y: 8 }}
         className={`fixed inset-0 z-[101] grid place-items-center p-4 ${donationOpen ? "pointer-events-auto" : "pointer-events-none"}`}
       >
-        <div
-          className="w-full max-w-md rounded-xl border border-zx-green/35 bg-zx-mid/80 p-6 glow"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="flex items-start justify-between">
-            <h4 id="donation-title" className="font-mono text-white">Support ZyberQuest</h4>
-            <button
-              onClick={closeDonation}
-              className="rounded-md p-1 text-zinc-300 hover:text-white border border-transparent hover:border-zx-green/30"
-              aria-label="Close donation dialog"
-            >
-              <X className="size-4" />
-            </button>
-          </div>
-          <p id="donation-desc" className="mt-2 text-sm text-zinc-300">
-            We appreciate any support for the development of educational privacy tools.
-            Retributions help us ship features faster. Thank you! 💚
-          </p>
+      <div
+        className="w-full max-w-md rounded-xl border border-zx-green/35 bg-zx-mid/80 p-6 glow"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between">
+          <h4 id="donation-title" className="font-mono text-white">Support ZyberQuest</h4>
+          <button
+            onClick={closeDonation}
+            className="rounded-md p-1 text-zinc-300 hover:text-white border border-transparent hover:border-zx-green/30"
+            aria-label="Close donation dialog"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
 
-          {/* Wallet + QR placeholders */}
-          <div className="mt-5 grid grid-cols-[1fr_auto] gap-4 items-center">
-            <div>
-              <p className="text-xs text-[var(--zx-yellow)]">Wallet address (to be confirmed)</p>
-              <div className="mt-1 rounded-md border border-zx-green/25 bg-black/40 p-2 font-mono text-xs text-zinc-400">
-                zk-addr: coming soon
-              </div>
-            </div>
-            <div
-              className="size-24 rounded-md border border-zx-green/25 bg-zx-ink/60 grid place-items-center text-[10px] text-zinc-400"
-              aria-label="QR code placeholder"
-            >
-              QR soon
+        <p id="donation-desc" className="mt-2 text-sm text-zinc-300">
+          We appreciate any support for the development of educational privacy tools.
+          Tips help us ship features faster. Thank you! <span className="text-[var(--zx-yellow)]">💛</span>
+        </p>
+
+        {/* Wallet + QR */}
+        <div className="mt-5 grid grid-cols-1 gap-4">
+          <div>
+            <p className="text-xs text-[var(--zx-yellow)]">Wallet address</p>
+            <div className="mt-1 rounded-md border border-zx-green/25 bg-black/40 p-2 font-mono text-xs text-zinc-100 select-all break-all">
+              {walletAddress || "zk-addr: (paste into walletAddress const)"}
             </div>
           </div>
 
-          <div className="mt-6 flex justify-end gap-3">
-            <Button
-              variant="secondary"
-              className="bg-transparent"
-              style={{ borderColor: "rgba(255,255,255,0.25)" }}
-              onClick={closeDonation}
-            >
-              Close
-            </Button>
-            <a
-              href="/#donate"
-              className="inline-flex items-center rounded-md px-3 py-2 transition-colors text-[var(--zx-yellow)]"
-              style={{ border: "1px solid rgba(255,214,10,0.4)" }}
-              onClick={(e) => e.preventDefault()}
-            >
-              Copy address
-            </a>
+          <div>
+            <p className="text-xs text-zinc-400">Scan QR</p>
+            <div className="mt-2 relative rounded-md border border-zx-green/25 bg-zx-ink/60 overflow-hidden">
+              <Image
+                src={walletQrSrc}
+                alt="Donation wallet QR"
+                width={384}
+                height={384}
+                className="w-full h-auto object-contain"
+                priority
+              />
+            </div>
           </div>
         </div>
+
+        <div className="mt-6 flex flex-wrap gap-3 justify-end">
+          <Button
+            variant="secondary"
+            className="bg-transparent"
+            style={{ borderColor: "rgba(255,255,255,0.25)" }}
+            onClick={closeDonation}
+          >
+            Close
+          </Button>
+          <button
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(walletAddress);
+                // simple feedback
+                alert("Wallet address copied to clipboard.");
+              } catch {
+                alert("Could not copy. Please copy manually.");
+              }
+            }}
+            className="inline-flex items-center rounded-md px-3 py-2 transition-colors text-[var(--zx-yellow)]"
+            style={{ border: "1px solid rgba(255,214,10,0.4)" }}
+            disabled={!walletAddress}
+            aria-disabled={!walletAddress}
+            title={!walletAddress ? "Set walletAddress in page.tsx" : "Copy address"}
+          >
+            Copy address
+          </button>
+        </div>
+      </div>
+
       </motion.div>
     </>
   );
