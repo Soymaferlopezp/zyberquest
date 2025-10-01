@@ -13,7 +13,7 @@ import { FALLBACK_UA, buildZcashURI } from '@/lib/coin';
 import { useToast } from '@/components/ui/use-toast';
 
 type NewCoinResponse = {
-  code?: string;       // memo (SIEMPRE viene del backend)
+  code?: string;       // memo (lo entrega el backend)
   address?: string;    // UA
   zcashURI?: string;   // opcional si backend ya lo arma
   expiresAt?: string;  // ISO
@@ -31,10 +31,8 @@ const POLL_MS = 10_000;
 const SLOW_WARN_MS = 150_000; // 2.5 minutes
 const PRICE_LABEL = '0.001 ZEC';
 
-// ← Base del backend: usa .env.local (NEXT_PUBLIC_API_BASE) o IP por defecto
-const API =
-  process.env.NEXT_PUBLIC_API_BASE ||
-  'http://192.168.100.12:3001';
+// Base del backend: usa .env.local (NEXT_PUBLIC_API_BASE) o IP por defecto
+const API = process.env.NEXT_PUBLIC_API_BASE || 'http://192.168.100.12:3001';
 
 export default function PayPanel() {
   const router = useRouter();
@@ -42,12 +40,12 @@ export default function PayPanel() {
 
   // ===== Base session =====
   const [loading, setLoading] = useState(true);
-  const [error, setError]   = useState<string | null>(null);
-  const [data, setData]     = useState<NewCoinResponse | null>(null);
+  const [error, setError]     = useState<string | null>(null);
+  const [data, setData]       = useState<NewCoinResponse | null>(null);
 
   // SIN memo local: todo viene del backend
   const ua   = data?.address || FALLBACK_UA;
-  const memo = data?.code    || ''; // si aún no llegó el backend, mostramos vacío
+  const memo = data?.code    || ''; // si aún no llegó el backend, vacío
 
   // URI: preferimos la del backend; si no viene, la construimos solo si ya hay address+memo
   const uri = useMemo(() => {
@@ -67,7 +65,7 @@ export default function PayPanel() {
 
   // ===== Start session (POST /api/coin/new) =====
   useEffect(() => {
-    if (createdRef.current) return; // evita doble POST en dev/StrictMode
+    if (createdRef.current) return; // evita doble POST en StrictMode
     createdRef.current = true;
 
     const ctrl = new AbortController();
@@ -75,7 +73,6 @@ export default function PayPanel() {
       try {
         setLoading(true);
         setError(null);
-        // ⬇️ Llama al backend por IP (o por NEXT_PUBLIC_API_BASE)
         const res = await fetch(`${API}/api/coin/new`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -84,7 +81,7 @@ export default function PayPanel() {
         });
         if (!res.ok) throw new Error((await res.text().catch(() => '')) || `HTTP ${res.status}`);
         const json = (await res.json()) as NewCoinResponse;
-        setData(json); // ← {code, address, zcashURI, expiresAt}
+        setData(json); // {code, address, zcashURI, expiresAt}
       } catch (e: any) {
         if (e?.name !== 'AbortError') setError(e?.message || 'Failed to start payment session');
       } finally {
@@ -95,12 +92,35 @@ export default function PayPanel() {
     return () => ctrl.abort();
   }, []);
 
+  // ===== Botón de depuración: crea sesión manualmente =====
+  async function manualNewSession() {
+    try {
+      setLoading(true);
+      setError(null);
+      console.log('API base =', API);
+      const res = await fetch(`${API}/api/coin/new`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+      });
+      console.log('coin/new status =', res.status);
+      const json = (await res.json()) as NewCoinResponse;
+      console.log('coin/new payload =', json);
+      setData(json);
+    } catch (e: any) {
+      console.error(e);
+      setError(e?.message || 'manual new session failed');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   // ===== Polling /api/coin/status?code=... =====
   useEffect(() => {
     if (!memo) return; // solo empezamos a sondear cuando ya tenemos el code del backend
     if (status === 'CONFIRMED' || status === 'EXPIRED') return;
 
-    // slow network warning at 2.5 min
+    // aviso de red lenta a los 2.5 min
     if (!slowWarnRef.current) {
       slowWarnRef.current = setTimeout(() => {
         if (status === 'PENDING') {
@@ -201,6 +221,11 @@ export default function PayPanel() {
             </span>
           )}
         </div>
+
+        {/* Botón de depuración: fuerza POST /coin/new */}
+        <Button type="button" variant="secondary" onClick={manualNewSession}>
+          New Session (debug)
+        </Button>
 
         {/* UA & Memo */}
         <AddressBox address={ua} loading={loading} />
