@@ -10,6 +10,7 @@
 <div align="center">
 
 [**Live Demo**](https://zyberquest.vercel.app)
+[**Video Demo**](https://youtu.be/e4WqcuG2BzE)
 
 </div>
 
@@ -17,34 +18,45 @@
 
 ## ✨ Overview
 
-ZyberQuest is a **2D cypherpunk arcade** with three replayable modes:
+ZyberQuest is a **2D cypherpunk arcade** with two modes:
 
-- **Educational Trivias** — Learn Zcash/privacy/ZK concepts with bite-size tooltips.  
-- **Exploration Mazes** — Top-down Phaser-powered levels with doors, keys, hazards, and portals.  
-- **Cipher Simulators** — Mini game (**Visual XOR**) with three difficulty modes to “decrypt” messages.
+- **DEMO (off-chain)**  
+  - Enter freely. All logic is local; no blockchain required.
 
+- **TOURNAMENT (on-chain)**  
+  - “Insert Coin”: player pays **0.001 ZEC** to our **Unified Address (UA)** with a **unique memo**.  
+  - Backend verifies the payment on Zcash mainnet and marks **CONFIRMED** after **1 confirmation**.  
+  - Frontend enables **PLAY** and grants access.  
+  - Network metrics are exposed from the Zcash CLI (via REST).
+
+> This README is organized for **judges and contributors**. It includes **architecture**, **folder structure**, **flows**, and **on-chain setup** (light client + Express REST API) while preserving the project’s original structure and wording.
 ---
 
-## 🧭 Table of Contents
+## 🧭 High-level architecture
 
-- [Features](#-features)  
-- [Tech Stack](#-tech-stack)  
-- [Design System](#-design-system)  
-- [Accessibility](#-accessibility)  
-- [Repository Structure](#-repository-structure)  
-- [App Routes & Flows](#-app-routes--flows)  
-- [Game Modes](#-game-modes)  
-  - [Trivias (Zcash Privacy Arcade)](#trivias-zcash-privacy-arcade)  
-  - [Laberintos (Exploration Mazes)](#laberintos-exploration-mazes)  
-  - [Simulators — Visual XOR](#simulators--visual-xor)  
-- [Getting Started](#-getting-started)  
-- [Environment Variables](#-environment-variables)  
-- [Scripts](#-scripts)  
-- [Development Guide](#-development-guide)  
-- [Testing & Quality](#-testing--quality)  
-- [Roadmap](#-roadmap)  
-- [License](#-license)  
-- [Team & Credits](#-team--credits)
+```bash
+:root {
++----------------------+ HTTPS (REST) +---------------------------+
+| Frontend (Next.js) | <-----------------------> | Backend (Node/Express) |
+| /tournament/pay | | zecwallet-cli wrapper |
+| - requests memo | +---------------------+ | /api/* endpoints |
+| - shows UA + QR | | public lightwalletd | | CORS + (optional) tunnel |
+| - polls status | +---------------------+ +-------------+-------------+
+| - enables PLAY | |
++----------+-----------+ | stdio to CLI
+| v
+| memo + 0.001 ZEC +------------------------+
++-------------------------------------------> | zecwallet-cli (light) |
+| data-dir: ~/zyberquest |
++------------------------+
+|
+| mainnet sync, memos,
+| balances, list, info
+v
++------------------------+
+| Zcash Mainnet |
++------------------------+
+```
 
 ---
 
@@ -101,57 +113,35 @@ ZyberQuest is a **2D cypherpunk arcade** with three replayable modes:
 
 ```bash
 zyberquest/
-├─ app/
-│  ├─ intro/page.tsx                 # Animated intro → /menu
-│  ├─ menu/page.tsx                  # Main mode selector (3 cards)
-│  ├─ trivias/page.tsx               # Trivia mode mount
-│  ├─ laberintos/
-│  │  ├─ page.tsx                    # Mode intro + Caesar capsule
-│  │  └─ play/page.tsx               # Phaser mount (Tutorial/Mission)
-│  ├─ simulators/page.tsx            # Simulators intro → Visual XOR
-│  ├─ api/                           # (if needed later)
-│  ├─ layout.tsx, globals.css, sitemap.ts, robots.ts
-│  └─ providers.tsx                  # UI providers if required
+├── backend/
+│   ├── server.js                        # Express API + zecwallet-cli integration
+│   ├── .env                             # backend config
+│   ├── backend.out                      # logs if run with nohup
+│   └── zecwallet-light-wallet.dat -> /real/path   # symlink to actual wallet
 │
-├─ components/
-│  ├─ Intro/                         # CodeRain, Logo, Typewriter, MuteToggle...
-│  ├─ Menu/                          # ModeCard, ModeGrid, MenuLayout...
-│  ├─ Trivia/                        # TriviaScreen, QuestionCard, SummaryModal...
-│  ├─ Simulators/                    # XORGrid, HUD, Summary...
-│  └─ UI/                            # Buttons, Cards, HUD bits
+├── src/
+│   ├── components/
+│   │   ├── tournament/PayPanel.tsx      # Insert Coin (tournament)
+│   │   └── Trivia/
+│   │       ├── IntroPanel.tsx
+│   │       ├── TriviaScreen.tsx
+│   │       └── SummaryModal.tsx
+│   ├── data/trivia-zcash.json           # question bank
+│   └── lib/
+│       └── tournament.ts                # code helpers (build URIs, session, result)
 │
-├─ game/labyrinth/
-│  ├─ index.ts                       # createPhaserGameWithMode / destroy
-│  ├─ config.ts                      # Phaser.GameConfig
-│  ├─ scenes/
-│  │  ├─ Boot.ts, Preload.ts
-│  │  ├─ LabPlay.ts                  # Core maze logic
-│  │  ├─ PortalMiniGame.ts           # Caesar portal
-│  │  ├─ HUD.ts, PauseOverlay.ts, Results.ts
-│  └─ systems/                       # collisions, controls, drones, lasers, portals, minimap
+├── app/
+│   ├── page.tsx                         # Landing + RPC footer (NetworkBar)
+│   ├── start/page.tsx                   # mode entry
+│   └── trivias/page.tsx                 # gameplay UI (demo/tournament via query)
 │
-├─ store/
-│  ├─ triviaStore.ts                 # state, scoring, persist
-│  └─ simStore.ts                    # Visual XOR state
+├── public/
+│   ├── qr/zyberquest-qr.jpg
+│   └── og/zyberquest-banner.png
 │
-├─ lib/
-│  ├─ triviaSchema.ts, triviaLoader.ts
-│  ├─ simGenerators.ts, xorSchema.ts
-│  └─ a11y.ts, sfx.ts (optional)
-│
-├─ data/
-│  ├─ trivia-zcash.json              # Question bank (Zod-validated)
-│  └─ nodes.json                     # Maze micro-capsules (2–3 lines each)
-│
-├─ public/
-│  ├─ runner/runner-{f|m}.png        # Characters
-│  ├─ laberintos/char-{f|m}.png
-│  ├─ sfx/                           # optional SFX
-│  └─ og/zyberquest-banner.png
-│
-├─ .env.example
-├─ package.json, tsconfig.json, next.config.js, tailwind.config.js
-└─ README.md
+├── .env.local
+└── README.md
+
 ```
 
 ---
@@ -246,13 +236,195 @@ Laser toggles every ~900ms; slow zones reduce speed to 60%; drone patrol via way
 **A11y**: focus ring per cell, aria-label per grid cell, keyboard navigation (arrows, Space/Enter, P, Esc).
 
 ---
+## 🔗 On-Chain Integration (Zcash)
+
+This section adds the light client + REST backend details while keeping your original structure intact.
+
+Prerequisites (Ubuntu 22/24 LTS)
+```bash
+# System & build tools
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y build-essential git pkg-config libssl-dev curl tmux htop jq
+
+# Light client (zecwallet-cli)
+# We use a public lightwalletd (Route A): https://zec.rocks:443 (mainnet)
+# Create/restore wallet (interactive):
+zecwallet-cli --server https://zec.rocks:443 --data-dir "$HOME/zyberquest"
+# commands: new | seed | addresses | balance | list | sync | rescan | quit
+
+Tips
+- UA printed in addresses.
+- Incoming memos appear in list ("memo").
+- Force sync via sync/rescan or POST /api/wallet/refresh.
+
+Backend (Node/Express)
+
+Environment (backend/.env)
+
+PORT=3001
+
+# Lightwalletd (single URL or failover list)
+LIGHTWALLETD_URL=https://zec.rocks:443
+# or:
+# LIGHTWALLETD_URLS=na.zec.rocks:9067,mainnet.lightwalletd.com:9067,lightwalletd.com:9067
+
+# CLI
+ZEC_CLI=zecwallet-cli
+ZEC_DATA_DIR=/home/<user>/zyberquest
+CLI_TIMEOUT_MS=15000
+
+# Tournament pricing & UI expiry
+COIN_PRICE_ZEC=0.001
+COIN_EXPIRE_SEC=900
+
+# Admin override for live demos
+FORCE_CONFIRM_KEY=ad6b9b1f0c2c4d0b9f3e2f7c8a1b6d2e
+
+# CORS
+CORS_ORIGINS=http://localhost:3000,https://zyberquest.vercel.app
+
+Install & Run
+cd ~/zyberquest/backend
+npm install
+node server.js
+# API up on :3001
+
+Optional tunnel (Cloudflare)
+curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o cloudflared
+chmod +x cloudflared
+./cloudflared tunnel --url http://localhost:3001
+# copy https://<sub>.trycloudflare.com into NEXT_PUBLIC_API_BASE
+
+REST Endpoints (summary)
+GET  /health                                # API status
+
+# Wallet
+GET  /api/wallet/address                     # UA (list + primary)
+GET  /api/wallet/balance                     # CLI balance (zats/ZEC)
+GET  /api/wallet/balance/derived             # Fallback: sum by list
+POST /api/wallet/refresh                     # sync; sync
+POST /api/wallet/rescan                      # rescan → (fallback) sync
+
+# Transactions & network
+GET  /api/tx/list?limit=50                   # normalized tx history
+GET  /api/tx/:txid                           # tx detail
+GET  /api/network/metrics                    # raw CLI info (height, chain)
+GET  /api/lwd/active                         # active LWD + pool (if failover)
+
+# Tournament / Insert Coin
+POST /api/coin/new                           # { code, address, zcashURI, expiresAt }
+GET  /api/coin/status?code=ZQ-...            # PENDING | CONFIRMED | EXPIRED (+confirmations)
+GET  /api/coin/inspect?memo=ZQ-...&minZec=0.001  # stateless by memo/amount (debug/manual)
+POST /api/coin/force-confirm                 # admin override (X-Admin-Key)
+
+# Tournament results (phase 1)
+GET  /api/tournament/validate-code?code=...  # verify confirmed ticket
+POST /api/tournament/result                  # { code, levelsPassed, score, playedAt } → tier
+POST /api/tournament/payout                  # staged (UI shows “in progress”)
+
+```
+**Robustness**
+
+- ANSI stripping + tolerant JSON parsing (take last valid JSON).
+- Derived balance fallback and /inspect stateless check.
+- /wallet/refresh mitigates “invalid consensus branch id”.
+
+**Tournament “Insert Coin” flow (user)**
+```bash
+/tournament/pay
+  ├─ POST /api/coin/new → { code, address, zcashURI, expiresAt }
+  ├─ Player pays 0.001 ZEC to UA with memo=code
+  ├─ Poll GET /api/coin/status?code=... every 10s
+  └─ When confirmations >= 1 → status=CONFIRMED → enable PLAY
+
+Sequence diagram (ASCII)
+Frontend                Backend                   zecwallet-cli            Zcash Mainnet
+   |  POST /coin/new      |                            |                           |
+   |--------------------->|                            |                           |
+   |  {code, UA, URI}     |                            |                           |
+   |<---------------------|                            |                           |
+   | (user pays 0.001ZEC + memo=code)                  |<===== tx + memo =========|
+   |  GET /coin/status    | run('list')                |---- list ---------------->|
+   |--------------------->|<---------------------------|                           |
+   |                      | run('info')                |---- info ---------------->|
+   |                      |<---------------------------|                           |
+   |  {CONFIRMED,1}       |                            |                           |
+   |<---------------------|                            |                           |
+   |  PLAY                |                            |                           |
+
+```
+
+**Frontend wiring**
+```bash
+# .env.local
+NEXT_PUBLIC_API_BASE=http://<ubuntu-ip>:3001
+# or trycloudflare URL:
+# NEXT_PUBLIC_API_BASE=https://<sub>.trycloudflare.com
+
+# /tournament (animated intro) → CTA: INSERT COIN
+# /tournament/pay (PayPanel)
+#   - POST {API}/api/coin/new on mount
+#   - Show UA, Memo, QR: zcash:<UA>?amount=0.001&memo=<code>
+#   - Poll {API}/api/coin/status?code=... every 10s
+#   - On CONFIRMED → enable PLAY
+
+Judge quick commands
+# 1) Health
+curl -s http://<host>:3001/health
+
+# 2) Address & balances
+curl -s http://<host>:3001/api/wallet/address | jq .
+curl -s http://<host>:3001/api/wallet/balance | jq .
+curl -s http://<host>:3001/api/wallet/balance/derived | jq .
+
+# 3) New ticket (memo)
+curl -s -X POST http://<host>:3001/api/coin/new | jq .
+
+# 4) Pay 0.001 ZEC with memo=<code> from any wallet
+
+# 5) Status
+curl -s "http://<host>:3001/api/coin/status?code=ZQ-XXXX-YYYY" | jq .
+
+# 6) Stateless inspect (debug/manual)
+curl -s "http://<host>:3001/api/coin/inspect?memo=ZQ-XXXX-YYYY&minZec=0.001" | jq .
+
+# 7) History & metrics
+curl -s "http://<host>:3001/api/tx/list?limit=10" | jq .
+curl -s "http://<host>:3001/api/network/metrics" | jq .
+
+# 8) Force refresh (mitigate lag/reorgs)
+curl -s -X POST http://<host>:3001/api/wallet/refresh | head
+
+Reproducibility checklist (for judges)
+# 1) Backend up
+node server.js
+curl /health → { ok: true }
+
+# 2) Show UA
+curl /api/wallet/address → UA displayed
+
+# 3) Create session
+curl -X POST /api/coin/new → { code, address, zcashURI }
+
+# 4) Pay 0.001 ZEC with memo=code
+
+# 5) Confirm
+curl /api/coin/status?code=<code> → CONFIRMED (>=1 conf)
+
+# 6) UI
+/tournament/pay → “Coin inserted ✓” → PLAY button enabled
+
+# 7) Metrics
+curl /api/network/metrics → height/chain info
+
+```
+---
 
 ## 🧑‍💻 Getting Started
 
 Prerequisites
 ```bash
 Node.js 20+ and npm 10+
-
 Git, a modern browser with WebGL (for Phaser)
 
 Install & Run
@@ -272,6 +444,13 @@ Build & start:
 
 npm run build
 npm start
+
+Backend (recap)
+cd ~/zyberquest/backend
+cp .env.example .env
+npm i
+node server.js
+
 ```
 
 ---
@@ -279,15 +458,12 @@ npm start
 ## 📦 Scripts
 
 ```bash
-npm run dev — Start Next dev server
+npm run dev        # Start Next dev server
+npm run build      # Production build
+npm run start      # Run production server
+npm run lint       # ESLint
+npm run postbuild  # Generate sitemap.xml/robots.txt (via next-sitemap)
 
-npm run build — Production build
-
-npm run start — Run production server
-
-npm run lint — ESLint
-
-npm run postbuild — Generate sitemap.xml/robots.txt (via next-sitemap)
 ```
 
 ---
@@ -327,22 +503,77 @@ Edit lib/modes.ts and push a new item to MODES:
 - Copy: /simulators intro + “What is XOR cipher?” card
 
 ---
+## 📎 Environment Samples (Appendix)
 
-## ✅ Testing & Quality
+backend/.env.example
 
-- Type-safety: Zod validates content (trivia, glyphs).
-- Linting: ESLint + TypeScript strict.
-- Pre-commit (suggested): add lint-staged + husky to guard formatting and linting.
-- Unit tests (suggested): Vitest + React Testing Library for stores and UI reducers.
+```bash
+PORT=3001
+ZEC_DATA_DIR=/home/USER/zyberquest/backend
+ZECWALLET_BIN=/home/USER/.cargo/bin/zecwallet-cli
+# OR alias
+ZEC_CLI=/home/USER/.cargo/bin/zecwallet-cli
 
----
+# Use either single URL or list for failover
+# LIGHTWALLETD_URL=https://zec.rocks:443
+LIGHTWALLETD_URLS=na.zec.rocks:9067,mainnet.lightwalletd.com:9067,lightwalletd.com:9067
 
-## 🗺 Roadmap
+CLI_TIMEOUT_MS=15000
+COIN_PRICE_ZEC=0.001
+COIN_EXPIRE_SEC=1800
+FORCE_CONFIRM_KEY=ad6b9b1f0c2c4d0b9f3e2f7c8a1b6d2e
 
-- ✅ MVP: three modes, basic UX, accessibility passes
-- ✅ Content: more questions, mazes, cipher puzzles
-- ✅ Polish: animations, SFX, code-rain, advanced HUD
-- ⏳ Future on-chain: ZK/identity hooks & rewards
+# CORS
+CORS_ORIGINS=http://localhost:3000,https://zyberquest.vercel.app
+
+frontend/.env.local.example
+
+NEXT_PUBLIC_API_BASE=http://192.168.100.12:3001
+# or:
+# NEXT_PUBLIC_API_BASE=https://<subdomain>.trycloudflare.com
+
+```
+## 🧩 Appendix — Insert Coin Flowchart (detailed)
+
+
+```bash
+            ┌──────────────────────────────┐
+            │   /tournament/pay (front)   │
+            └───────────────┬─────────────┘
+                            POST /api/coin/new
+                                 │
+                                 ▼
+                         ┌──────────────┐
+                         │  Generate    │
+                         │  code (memo) │
+                         └──────┬───────┘
+                                │
+                      UA ← CLI addresses
+                                │
+                                ▼
+                    { code, UA, zcashURI, exp }
+                                │
+                                ▼
+   [User sends 0.001 ZEC + memo=code to UA from any wallet]
+                                │
+                         (every 10s poll)
+                                ▼
+                      GET /api/coin/status?code
+                                │
+                                ▼
+                         CLI list + info
+                                │
+             ┌──────── confirmed? (>=1 conf) ────────┐
+             │                                        │
+            NO                                       YES
+             │                                        │
+             ▼                                        ▼
+        PENDING (or EXPIRED)                     CONFIRMED
+             │                                        │
+             └────── polling continues ───────────────┘
+
+
+```
 
 ---
 
