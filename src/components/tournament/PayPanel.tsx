@@ -12,59 +12,58 @@ import { FALLBACK_UA, buildZcashURI } from '@/lib/coin';
 import { useToast } from '@/components/ui/use-toast';
 
 type NewCoinResponse = {
-  code?: string;       // memo (lo entrega el backend)
-  address?: string;    // UA
-  zcashURI?: string;   // opcional si backend ya lo arma
-  expiresAt?: string;  // ISO
+  code?: string;
+  address?: string;
+  zcashURI?: string;
+  expiresAt?: string;
 };
 
 type StatusValue = 'PENDING' | 'CONFIRMED' | 'EXPIRED';
 
 type StatusResponse = {
   status: StatusValue;
-  confirmations?: number;   // 0..1
-  blockHeight?: number;     // opcional
+  confirmations?: number;
+  blockHeight?: number;
+  txid?: string | null;
 };
 
-const POLL_MS = 10_000;
-const SLOW_WARN_MS = 150_000; // 2.5 minutes
+const POLL_MS = 5_000;
+const SLOW_WARN_MS = 30 * 60 * 1000;
 const PRICE_LABEL = '0.001 ZEC';
+const FORCE_DELAY_MS = 60_000; // mostrar botón a los 60s
 
-// Base del backend: usa .env.local (NEXT_PUBLIC_API_BASE) o IP por defecto
 const API = process.env.NEXT_PUBLIC_API_BASE || 'http://192.168.100.12:3001';
 
 export default function PayPanel() {
   const router = useRouter();
   const { toast } = useToast();
 
-  // ===== Base session =====
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState<string | null>(null);
   const [data, setData]       = useState<NewCoinResponse | null>(null);
 
-  // SIN memo local: todo viene del backend
   const ua   = data?.address || FALLBACK_UA;
-  const memo = data?.code    || ''; // si aún no llegó el backend, vacío
+  const memo = data?.code    || '';
 
-  // URI: preferimos la del backend; si no viene, la construimos solo si ya hay address+memo
   const uri = useMemo(() => {
     if (data?.zcashURI) return data.zcashURI;
     if (ua && memo) return buildZcashURI(ua, memo);
     return '';
   }, [data?.zcashURI, ua, memo]);
 
-  // ===== Status & network =====
   const [status, setStatus] = useState<StatusValue>('PENDING');
-  const [confirmations, setConfirmations] = useState(0); // 0..1
+  const [confirmations, setConfirmations] = useState(0);
   const [blockHeight, setBlockHeight] = useState(0);
 
   const createdRef  = useRef(false);
   const pollRef     = useRef<ReturnType<typeof setInterval> | null>(null);
   const slowWarnRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // ===== Start session (POST /api/coin/new) =====
+  const [forceVisible, setForceVisible] = useState(false);
+
+  // ===== Nueva sesión
   useEffect(() => {
-    if (createdRef.current) return; // evita doble POST en StrictMode
+    if (createdRef.current) return;
     createdRef.current = true;
 
     const ctrl = new AbortController();
@@ -80,7 +79,14 @@ export default function PayPanel() {
         });
         if (!res.ok) throw new Error((await res.text().catch(() => '')) || `HTTP ${res.status}`);
         const json = (await res.json()) as NewCoinResponse;
-        setData(json); // {code, address, zcashURI, expiresAt}
+        setData(json);
+
+        // Debug útil para verificar QR y memo:
+        console.log('[pay] memo(code)=', json.code);
+        console.log('[pay] zcashURI =', json.zcashURI);
+
+        setForceVisible(false);
+        setTimeout(() => setForceVisible(true), FORCE_DELAY_MS);
       } catch (e: any) {
         if (e?.name !== 'AbortError') setError(e?.message || 'Failed to start payment session');
       } finally {
@@ -91,35 +97,36 @@ export default function PayPanel() {
     return () => ctrl.abort();
   }, []);
 
-  // ===== Botón de depuración: crea sesión manualmente =====
   async function manualNewSession() {
     try {
       setLoading(true);
       setError(null);
-      console.log('API base =', API);
       const res = await fetch(`${API}/api/coin/new`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         cache: 'no-store',
       });
-      console.log('coin/new status =', res.status);
       const json = (await res.json()) as NewCoinResponse;
-      console.log('coin/new payload =', json);
       setData(json);
+      setStatus('PENDING');
+      setConfirmations(0);
+      setForceVisible(false);
+      setTimeout(() => setForceVisible(true), FORCE_DELAY_MS);
+
+      console.log('[pay] memo(code)=', json.code);
+      console.log('[pay] zcashURI =', json.zcashURI);
     } catch (e: any) {
-      console.error(e);
       setError(e?.message || 'manual new session failed');
     } finally {
       setLoading(false);
     }
   }
 
-  // ===== Polling /api/coin/status?code=... =====
+  // ===== Polling de estado
   useEffect(() => {
-    if (!memo) return; // solo empezamos a sondear cuando ya tenemos el code del backend
+    if (!memo) return;
     if (status === 'CONFIRMED' || status === 'EXPIRED') return;
 
-    // aviso de red lenta a los 2.5 min
     if (!slowWarnRef.current) {
       slowWarnRef.current = setTimeout(() => {
         if (status === 'PENDING') {
@@ -133,35 +140,29 @@ export default function PayPanel() {
 
     async function fetchStatus() {
       try {
-        const res = await fetch(
-          `${API}/api/coin/status?code=${encodeURIComponent(memo)}`,
-          { method: 'GET', cache: 'no-store' }
-        );
+        const res = await fetch(`${API}/api/coin/status?code=${encodeURIComponent(memo)}`, { cache: 'no-store' });
         if (!res.ok) throw new Error(`Status HTTP ${res.status}`);
         const json = (await res.json()) as StatusResponse;
 
         if (typeof json.blockHeight === 'number') setBlockHeight(json.blockHeight);
-        if (typeof json.confirmations === 'number') setConfirmations(Math.max(0, Math.min(1, json.confirmations)));
+        if (typeof json.confirmations === 'number') {
+          setConfirmations(Math.max(0, Math.min(1, json.confirmations)));
+        }
 
         if (json.status === 'CONFIRMED') {
           setStatus('CONFIRMED');
           setConfirmations(1);
-
-          // Guarda el memo (code) confirmado para la siguiente pantalla
-          try {
-            sessionStorage.setItem('tournament_code', memo);
-          } catch {}
+          try { sessionStorage.setItem('tournament_code', memo); } catch {}
         } else if (json.status === 'EXPIRED') {
           setStatus('EXPIRED');
         } else {
           setStatus('PENDING');
         }
       } catch {
-        // error transitorio: reintenta en el siguiente tick
+        // retry next tick
       }
     }
 
-    // primer tiro inmediato + intervalo
     fetchStatus();
     pollRef.current = setInterval(fetchStatus, POLL_MS);
 
@@ -175,6 +176,17 @@ export default function PayPanel() {
     };
   }, [memo, status, toast]);
 
+  // ===== Redirección cuando confirma
+  useEffect(() => {
+    if (status === 'CONFIRMED' && memo) {
+      try { sessionStorage.setItem('tournament_code', memo); } catch {}
+      const t = setTimeout(() => {
+        router.push(`/tournament/trivia?code=${encodeURIComponent(memo)}`);
+      }, 300);
+      return () => clearTimeout(t);
+    }
+  }, [status, memo, router]);
+
   const expiresHuman = useMemo(() => {
     if (!data?.expiresAt) return null;
     const d = new Date(data.expiresAt);
@@ -185,15 +197,31 @@ export default function PayPanel() {
 
   const canPlay = status === 'CONFIRMED';
 
-  function handlePlay() {
-    if (!canPlay) return;
-
-    // Reafirma guardar el code antes de salir
-    try { sessionStorage.setItem('tournament_code', memo); } catch {}
-
-    // Mantiene la ruta actual (play). Si se va a trivia, cambia a /tournament/trivia
-    router.push(`/tournament/play?code=${encodeURIComponent(memo)}`);
-    // router.push(`/tournament/trivia?code=${encodeURIComponent(memo)}`);
+  async function forceConfirm() {
+    if (!memo) return;
+    try {
+      const res = await fetch(`${API}/api/coin/force-confirm`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+        body: JSON.stringify({ code: memo }),
+      });
+      if (res.status === 409) {
+        toast({
+          title: 'We have not seen your payment yet',
+          description: 'Please wait a bit more or ensure your wallet sent the tx.',
+        });
+        return;
+      }
+      if (!res.ok) throw new Error(`force HTTP ${res.status}`);
+      setStatus('CONFIRMED');
+      setConfirmations(1);
+    } catch {
+      toast({
+        title: 'Could not force confirmation',
+        description: 'Try again in a few seconds.',
+      });
+    }
   }
 
   return (
@@ -212,7 +240,7 @@ export default function PayPanel() {
           <div className="justify-self-end font-mono">{PRICE_LABEL}</div>
         </div>
 
-        {/* Session status line */}
+        {/* Status line */}
         <div className="min-h-5 text-xs" aria-live="polite">
           {loading && <span role="status" className="text-zinc-400">Initializing payment session…</span>}
           {!loading && error && <span role="alert" className="text-amber-400">{error}</span>}
@@ -220,7 +248,7 @@ export default function PayPanel() {
             <span className="text-zinc-500">Waiting for on-chain confirmation…</span>
           )}
           {!loading && !error && status === 'CONFIRMED' && (
-            <span className="text-emerald-400">Coin inserted ✓</span>
+            <span className="text-emerald-400">Coin inserted ✓ Redirecting…</span>
           )}
           {!loading && !error && status === 'EXPIRED' && (
             <span className="text-amber-400">Session expired. Refresh to start a new one.</span>
@@ -232,12 +260,12 @@ export default function PayPanel() {
           )}
         </div>
 
-        {/* Botón de depuración: fuerza POST /coin/new */}
+        {/* New session debug */}
         <Button type="button" variant="secondary" onClick={manualNewSession}>
           New Session (debug)
         </Button>
 
-        {/* UA & Memo */}
+        {/* Address & Memo */}
         <AddressBox address={ua} loading={loading} />
         <MemoBox memo={memo} loading={loading || !memo} />
 
@@ -245,23 +273,26 @@ export default function PayPanel() {
         <QrBox zcashURI={uri} loading={loading || !memo} />
 
         {/* Network / Progress */}
-        <NetworkBar
-          blockHeight={blockHeight}
-          etaSecondsPerBlock={75}
-          confirmations={confirmations}
-        />
+        <NetworkBar blockHeight={blockHeight} etaSecondsPerBlock={75} confirmations={confirmations} />
 
-        {/* CTA */}
+        {/* CTA principal */}
         <Button
           type="button"
           className="w-full"
           disabled={!canPlay}
           aria-disabled={!canPlay}
           aria-live="polite"
-          onClick={handlePlay}
+          onClick={() => router.push(`/tournament/trivia?code=${encodeURIComponent(memo)}`)}
         >
           {canPlay ? 'PLAY' : 'Waiting for confirmation…'}
         </Button>
+
+        {/* Fallback humano: aparece a los 60s */}
+        {status === 'PENDING' && memo && forceVisible && (
+          <Button type="button" variant="outline" className="w-full" onClick={forceConfirm}>
+            Payment ready
+          </Button>
+        )}
       </CardContent>
     </Card>
   );
